@@ -1,0 +1,3 @@
+def test_query():
+    # TODO: write test for query command
+    ...

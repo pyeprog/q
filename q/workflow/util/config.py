@@ -1,0 +1,96 @@
+from abc import ABC, abstractmethod
+from pathlib import Path
+
+from pydantic.fields import Field
+from pydantic.main import BaseModel
+from pydantic_graph.graph import Graph
+from pydantic_graph.persistence.file import BaseStatePersistence, FileStatePersistence
+from pydantic_graph.persistence import Snapshot
+
+from q.workflow.agent.config import AgentConfig
+from q.workflow.base_workflow import BaseWorkflow
+from q.workflow.persistence import PERSISTENCE_FILENAME
+
+AgentConfigMap = dict[str, AgentConfig]
+
+
+class ConfigurableNode(ABC):
+    @classmethod
+    @abstractmethod
+    def agent_config(cls) -> AgentConfigMap:
+        raise NotImplementedError
+
+
+CONFIG_FILENAME = "agent_config.json"
+
+
+class WorkflowConfig(BaseModel):
+    """collector for config passing through cli"""
+
+    workflow_name: str = "placeholder"
+    agent_config_map: AgentConfigMap = Field(default_factory=dict)
+
+    @property
+    def workflow_cls(self) -> type[BaseWorkflow]:
+        from q.workflow import WORKFLOW_MAP
+
+        return WORKFLOW_MAP[self.workflow_name]
+
+    def get_agent_config(self, agent_name: str) -> AgentConfig:
+        return self.agent_config_map[agent_name]
+
+
+def load_config(dir_: str | Path = ".") -> WorkflowConfig:
+    path = Path(dir_) / CONFIG_FILENAME
+    if not path.exists():
+        raise FileNotFoundError(f"Config file {path} not found.")
+
+    return WorkflowConfig.model_validate_json(path.read_bytes())
+
+
+def save_config(config: WorkflowConfig, dir_: str | Path = ".", append: bool = True):
+    path = Path(dir_) / CONFIG_FILENAME
+
+    origin_config = WorkflowConfig()
+    if append and path.exists():
+        origin_config = WorkflowConfig.model_validate_json(path.read_bytes())
+
+    config.agent_config_map.update(origin_config.agent_config_map)
+
+    path.write_text(config.model_dump_json())
+
+
+class LocalConfigLoader:
+    def __init__(self, directory: str | Path) -> None:
+        self._dir: Path = Path(directory)
+        assert self._dir.exists() and self._dir.is_dir(), "directory must exist and be a directory"
+        self._config_file = self._dir / CONFIG_FILENAME
+        assert self._config_file.exists() and self._config_file.is_file(), "config file must exist and be a file"
+
+    @property
+    def workflow_config(self) -> WorkflowConfig:
+        return load_config(self._dir)
+
+    @property
+    def graph(self) -> Graph:
+        return self.workflow_config.workflow_cls().graph()
+
+    @property
+    def state_type(self):
+        return self.graph._state_type
+
+    @property
+    def persistence(self) -> BaseStatePersistence | None:
+        history_file = self._dir / PERSISTENCE_FILENAME
+        if not (history_file.exists() and history_file.is_file()):
+            return None
+
+        persistence = FileStatePersistence(history_file)
+        persistence.set_graph_types(self.graph)
+        return persistence
+
+    async def snapshots(self) -> list[Snapshot]:
+        if not self.persistence:
+            return []
+
+        return await self.persistence.load_all()

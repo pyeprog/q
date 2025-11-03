@@ -1,0 +1,22 @@
+[project]
+name = "q"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "more-itertools>=10.8.0",
+    "pydantic-ai>=1.9.0",
+    "pydantic-ai-slim[duckduckgo,tavily]>=1.9.0",
+    "python-dotenv>=1.1.1",
+    "toml>=0.10.2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.4.2", "pytest-asyncio>=1.2.0"]
+
+[tool.ruff]
+line-length = 120
+
+[project.scripts]
+q = "q.cli:main"
