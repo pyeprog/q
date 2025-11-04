@@ -1,9 +1,7 @@
+from pathlib import Path
 from dotenv import load_dotenv
 from pydantic_ai import Tool
-from pydantic_ai.common_tools.duckduckgo import DuckDuckGoSearchTool
 from ddgs import DDGS
-from pydantic_ai.common_tools.tavily import TavilySearchTool
-from tavily.async_tavily import AsyncTavilyClient
 from typing import Callable, Literal
 from pydantic.main import BaseModel
 
@@ -43,7 +41,10 @@ def think_tool(thoughts: list[Thought]) -> str:
 
 
 def create_tavily_search_tool(max_retries: int | None = None):
-    load_dotenv()
+    from pydantic_ai.common_tools.tavily import TavilySearchTool
+    from tavily.async_tavily import AsyncTavilyClient
+
+    load_dotenv(Path.cwd() / ".env")
 
     return Tool(
         TavilySearchTool(client=AsyncTavilyClient()).__call__,
@@ -53,34 +54,26 @@ def create_tavily_search_tool(max_retries: int | None = None):
     )
 
 
-tavily_search_tool = create_tavily_search_tool()
-tavily_search_tool_3_retries = create_tavily_search_tool(max_retries=3)
-
-
 def create_duckduckgo_search_tool(max_results: int = 5, max_retries: int | None = None):
+    from pydantic_ai.common_tools.duckduckgo import DuckDuckGoSearchTool
+
     return Tool(
         DuckDuckGoSearchTool(client=DDGS(), max_results=max_results).__call__,
         name="duckduckgo_web_search",
         description="Searches DuckDuckGo for the given query and returns the results. This tool is free to use.",
-        max_retries=max_results,
+        max_retries=max_retries,
     )
 
 
-duckduckgo_search_tool = create_duckduckgo_search_tool()
-duckduckgo_search_tool_3_retries = create_duckduckgo_search_tool(max_retries=3)
+class ToolMap:
+    def __init__(self):
+        self._dict = {
+            "think_tool": think_tool,
+            "tavily_search_tool": create_tavily_search_tool(),
+            "tavily_search_tool_3_retries": create_tavily_search_tool(max_retries=3),
+            "duckduckgo_search_tool": create_duckduckgo_search_tool(),
+            "duckduckgo_search_tool_3_retries": create_duckduckgo_search_tool(max_retries=3),
+        }
 
-tools = {
-    "think_tool": think_tool,
-    "tavily_search_tool": tavily_search_tool,
-    "tavily_search_tool_3_retries": tavily_search_tool_3_retries,
-    "duckduckgo_search_tool": duckduckgo_search_tool,
-    "duckduckgo_search_tool_3_retries": duckduckgo_search_tool_3_retries,
-}
-
-
-def all_tool_names() -> list[str]:
-    return list(tools.keys())
-
-
-def tool_of[T](tool_name: str, default: T | None = None) -> Callable | T:
-    return tools.get(tool_name, default)
+    def get[T](self, key: str, default: T | None = None) -> Callable | T:
+        return self._dict.get(key, default)

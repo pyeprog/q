@@ -14,8 +14,10 @@ from q.workflow.repository.deep_research.halt import (
 )
 from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
-from q.workflow.util.config import AgentConfigMap, ConfigurableNode, load_config
+from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.node import ConfigurableNode
+from q.workflow.util.typing import AgentConfigMap
 
 
 @dataclass
@@ -67,9 +69,9 @@ class Review(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
     def instruction(self) -> str:
         _instruction = Instruction(
             role="You are a senior researcher and has ability and taste to evaluate research report",
-            task="Given origin user requirements, research plan(a set of leading questions) and research report, your job is to decide whether the report is good enough to submit. If not you should decide which step we should go back to, whether it's planning, researching or even user requirement revising. You should attach your feedback to this step as well",
+            task="Given origin user requirements, research plan(a set of leading questions) and research report, your job is to decide whether the report is good enough to submit. If not, you should decide which step we should go back to, whether it's user requirement revising, research planning or research conducting. You should attach your feedback to this step as well",
             context=[
-                "the research steps are user requirement revising, research planning(ask questions), conducting researching"
+                "the research steps are user requirement revising, research planning(ask questions), research conducting"
             ],
             output_formats=["plain text without markdown decoration, such as bold, italic and so on"],
             guidelines=[

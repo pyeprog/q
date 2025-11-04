@@ -31,7 +31,7 @@ def agent_event_stream_handler(event_handlers: list[Callable]):
 
 
 def open_router_model(model_name: str, env_path: Path | None = None) -> OpenAIChatModel:
-    env_path = env_path or Path()
+    env_path = env_path or Path.cwd()
     dotenv_file = env_path / ".env"
     assert dotenv_file.exists(), f".env file not found in {env_path}"
     assert load_dotenv(dotenv_file)

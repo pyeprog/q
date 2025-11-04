@@ -2,7 +2,6 @@ import asyncio
 from dataclasses import fields
 from itertools import chain
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 from typing import Callable
@@ -10,13 +9,15 @@ from typing import Callable
 from pydantic_graph.persistence.file import FileStatePersistence
 from pydantic_graph.persistence import Snapshot
 import toml
-from q.workflow import WORKFLOW_MAP
+from q.workflow.repository import WORKFLOW_MAP
 from q.workflow.persistence import PERSISTENCE_FILENAME
 from q.workflow.util.config import LocalConfigLoader, WorkflowConfig
-from q.workflow.agent.tool import tool_of
-from q.workflow.util.config import ConfigurableNode, load_config, save_config
+from q.workflow.agent.tool import ToolMap
+from q.workflow.util.config import load_config, save_config
 from q.workflow.util.deps import BaseDeps
 from q.cli.config import centralized_config
+from q.cli.workflow import workflow_manager
+from q.workflow.util.node import ConfigurableNode
 
 
 def query(user_input: str, extra_tools: list[str] | None = None):
@@ -27,13 +28,19 @@ def query(user_input: str, extra_tools: list[str] | None = None):
         extra_tool (list[str]): extra function tools
     """
     workflow_config = load_config()
-    workflow_cls = WORKFLOW_MAP.get(workflow_config.workflow_name)
+
+    workflow_cls = workflow_manager.workflow_map.get(workflow_config.workflow_name, None)
+
     if not workflow_cls:
-        print(f"Workflow {workflow_config.workflow_name} not found", file=sys.stderr)
+        print(
+            f"Workflow {workflow_config.workflow_name} not found, use workflow command to check them out",
+            file=sys.stderr,
+        )
         exit(1)
 
     extra_tools = extra_tools or []
-    tools: list[Callable] = [tool_of(t) for t in extra_tools]
+    tool_map = ToolMap()
+    tools: list[Callable] = [tool_map.get(t) for t in extra_tools]
 
     workflow = workflow_cls(BaseDeps(tools))
     workflow.entry(user_input)
@@ -67,11 +74,11 @@ def create_query(directory: str | Path, workflow: str, refer_dir: str | Path | N
     # 2. get agent_config_dict from each one of them
     # 3. merge them into one agent_config_dict and
     # 4. save it to agent_config.json file under given path
-    workflow_cls = WORKFLOW_MAP.get(workflow, None)
+    workflow_map = workflow_manager.workflow_map
+    workflow_cls = workflow_map.get(workflow, None)
+
     if not workflow_cls:
-        print(
-            f"Workflow {workflow!r} is not registered, available workflow: {list(WORKFLOW_MAP.keys())}", file=sys.stderr
-        )
+        print(f"Workflow {workflow} not found, use workflow command to check them out", file=sys.stderr)
         exit(1)
 
     workflow_graph = workflow_cls(BaseDeps()).graph()
@@ -92,7 +99,7 @@ def create_query(directory: str | Path, workflow: str, refer_dir: str | Path | N
             print(f"Path {refer_dir} is not valid query", file=sys.stderr)
             exit(1)
 
-        loader = LocalConfigLoader(ref_path)
+        loader = LocalConfigLoader(ref_path, workflow_map)
         translation_config = {
             "src": {"available_fields": [f.name for f in fields(loader.state_type)]},  # type: ignore
             "dst": {f.name: [] for f in fields(workflow_graph._state_type)},  # type: ignore
@@ -157,7 +164,7 @@ def info(directory: str | Path):
     """
 
     async def _helper():
-        loader = LocalConfigLoader(directory)
+        loader = LocalConfigLoader(directory, workflow_manager.workflow_map)
         print("these fields are supported: ", " | ".join([field.name for field in fields(loader.state_type)]))  # type: ignore
 
         if snapshots := await loader.snapshots():
@@ -179,7 +186,7 @@ def ls(directory: str | Path, snapshot: int, field: str):
     """
 
     async def _helper():
-        loader = LocalConfigLoader(directory)
+        loader = LocalConfigLoader(directory, workflow_manager.workflow_map)
 
         index = snapshot
         snapshots = await loader.snapshots()
@@ -198,16 +205,14 @@ def ls(directory: str | Path, snapshot: int, field: str):
 
     asyncio.run(_helper())
 
-    
 
 def print_config():
-    """print all config key-value pairs stored in centralized config file
-    """
-    print(f"[config file is at {str(centralized_config.file_path)}]", end='\n'*2)
+    """print all config key-value pairs stored in centralized config file"""
+    print(f"[config file is at {str(centralized_config.file_path)}]", end="\n" * 2)
     for key, value in centralized_config.config.items():
         print(f"{key} = {value}")
 
-    
+
 def set_config(key_value_strs: list[str]):
     """save given config to config file
 
@@ -217,13 +222,13 @@ def set_config(key_value_strs: list[str]):
     config_dict: dict[str, str] = {}
     for key_value_str in key_value_strs:
         try:
-            key, value = key_value_str.split('=')
+            key, value = key_value_str.split("=")
             key = key.strip()
             value = value.strip()
             config_dict[key] = value
-        except:
+        except Exception:
             print("Invalid key=value pair: {key_value_str}, please check your input", file=sys.stderr)
-            
+
     centralized_config.set(config_dict)
 
 
@@ -234,3 +239,32 @@ def unset_config(keys: list[str]):
         keys (list[str]): keys in format of [<key1>, <key2>, ...]
     """
     centralized_config.unset(keys)
+
+
+def print_workflow():
+    """print all workflows"""
+    print("WORKFLOW \t MODULE \t DELETABLE")
+    for module in workflow_manager.workflow_modules:
+        for cls in module.workflow_classes:
+            print(f"{cls.__name__} \t {module.mod_name} \t True")
+            
+    for name in WORKFLOW_MAP.keys():
+        print(f"{name} \t Internal \t False")
+
+        
+def rm_workflow_mod(workflow_mod_names: list[str]):
+    """remove workflow modules by given module names, invalid name will be ignored
+
+    Args:
+        workflow_mod_names (list[str]): list of module names
+    """
+    workflow_manager.rm_workflow_modules(workflow_mod_names=workflow_mod_names)
+    
+
+def add_workflow_mod(workflow_mod_paths: list[str | Path]):
+    """add workflow modules by given paths(either python file path or python module directory path)
+
+    Args:
+        workflow_mod_paths (list[str  |  Path]): module path
+    """
+    workflow_manager.add_workflow_modules(workflow_mod_paths)

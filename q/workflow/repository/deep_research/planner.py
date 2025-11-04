@@ -12,8 +12,10 @@ from q.workflow.agent.util import (
 )
 from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
-from q.workflow.util.config import AgentConfigMap, ConfigurableNode, load_config
+from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.node import ConfigurableNode
+from q.workflow.util.typing import AgentConfigMap
 
 
 @dataclass

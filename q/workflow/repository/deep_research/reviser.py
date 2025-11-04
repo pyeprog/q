@@ -8,8 +8,10 @@ from q.workflow.repository.deep_research.planner import Plan
 
 from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction, PromptExample
-from q.workflow.util.config import AgentConfigMap, ConfigurableNode, load_config
+from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.node import ConfigurableNode, NodeToHalt
+from q.workflow.util.typing import AgentConfigMap
 
 
 class UserRequirement(BaseModel):
@@ -21,7 +23,7 @@ class ContinueRevising(BaseModel):
 
 
 @dataclass
-class UserRevise(BaseNode[DeepResearchState, BaseDeps]):
+class UserRevise(BaseNode[DeepResearchState, BaseDeps], NodeToHalt):
     input_: str = field(default="")
 
     def set(self, input_: str):

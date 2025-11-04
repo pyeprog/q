@@ -4,6 +4,7 @@ from pydantic_graph.nodes import BaseNode, GraphRunContext
 
 from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.node import NodeToHalt
 
 
 class BackToRequirementRevising(BaseModel):
@@ -23,7 +24,7 @@ class SubmitResearchReport(BaseModel):
 
 
 @dataclass
-class Halt(BaseNode[DeepResearchState, BaseDeps]):
+class Halt(BaseNode[DeepResearchState, BaseDeps], NodeToHalt):
     review: BackToRequirementRevising | BackToResearchPlanning | BackToResearchConducting | SubmitResearchReport
 
     async def run(self, ctx: GraphRunContext) -> "Halt":

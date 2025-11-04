@@ -5,6 +5,4 @@ from pydantic_ai.messages import ModelMessage
 
 @dataclass
 class DefaultState:
-    message_history: list[ModelMessage] = field(
-        default_factory=list
-    )  # all agents should save their message history into it
+    message_history: list[ModelMessage] = field(default_factory=list)

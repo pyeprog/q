@@ -1,7 +1,7 @@
 from q.workflow.agent.config import AgentConfig
 from q.workflow.agent.util import agent_event_stream_handler
 from q.workflow.repository.default.halt import Halt
-from q.workflow.util.config import AgentConfigMap, ConfigurableNode, load_config
+from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
 from q.workflow.repository.default.state import DefaultState
 
@@ -12,6 +12,9 @@ from pydantic_graph.nodes import BaseNode, GraphRunContext
 
 
 from dataclasses import dataclass
+
+from q.workflow.util.node import ConfigurableNode
+from q.workflow.util.typing import AgentConfigMap
 
 
 @dataclass

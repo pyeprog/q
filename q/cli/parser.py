@@ -1,9 +1,6 @@
 import argparse
 from pathlib import Path
 
-from q.workflow import WORKFLOW_MAP
-from q.workflow.agent.tool import all_tool_names
-
 
 def parser():
     _parser = argparse.ArgumentParser(prog="query", description="a cli for AI agent or workflow")
@@ -27,7 +24,7 @@ def parser():
         nargs="*",
         dest="extra_tools",
         help="extra function tools for AI agent",
-        metavar="|".join(all_tool_names()),
+        metavar="check out using tool subcommand",
     )
 
     create_parser = subcommand.add_parser(
@@ -51,7 +48,7 @@ def parser():
         nargs="?",
         dest="workflow",
         help="specify which workflow to init the directory",
-        metavar="|".join(WORKFLOW_MAP.keys()),
+        metavar="check out using workflow subcommand",
     )
     create_parser.add_argument(
         "--refer_dir",
@@ -92,15 +89,33 @@ def parser():
         dest="field",
         help="the field of the state, default to use the `first` field",
     )
-    
-    config_parser = subcommand.add_parser(
-        "config", help="config platform keys, default model, and more"
-    )
+
+    config_parser = subcommand.add_parser("config", help="config platform keys, default model, and more")
     config_parser.add_argument(
         "--set", action="extend", nargs="+", type=str, dest="key_value_strs", help="key=value pairs to set in config"
     )
     config_parser.add_argument(
         "--unset", action="extend", nargs="+", type=str, dest="unset_keys", help="keys to unset from config"
+    )
+
+    workflow_parser = subcommand.add_parser("workflow", aliases=["w"], help="add, remove, list workflows")
+    workflow_parser.add_argument(
+        "--add",
+        action="extend",
+        nargs="+",
+        type=Path,
+        dest="workflow_mods_to_add",
+        help="paths of workflow module to add, a single module might have multiple workflows",
+        metavar="python_mod_path"
+    )
+    workflow_parser.add_argument(
+        "--rm",
+        action="extend",
+        nargs="+",
+        type=str,
+        dest="workflow_mods_to_rm",
+        help="names of workflow module to remove, a single module might have multiple workflows",
+        metavar="workflow_module_name"
     )
 
     return _parser

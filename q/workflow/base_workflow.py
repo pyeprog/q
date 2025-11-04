@@ -3,10 +3,11 @@ import asyncio
 from dataclasses import dataclass
 
 from pydantic_graph.graph import Graph
-from pydantic_graph.nodes import BaseNode
+from pydantic_graph.nodes import BaseNode, End
 from pydantic_graph.persistence import BaseStatePersistence
 
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.node import NodeToHalt
 
 
 @dataclass
@@ -18,7 +19,7 @@ class BaseWorkflow(ABC):
         self.deps = deps or BaseDeps()
 
     @abstractmethod
-    def graph(self) -> Graph:
+    def graph(self) -> Graph[State, BaseDeps]:
         raise NotImplementedError
 
     @abstractmethod
@@ -26,12 +27,20 @@ class BaseWorkflow(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def recover(self, user_input: str) -> tuple[State, BaseNode]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def run(self, *args, **kwargs) -> None:
+    async def recover(self, user_input: str) -> tuple[State, BaseNode[State, BaseDeps]]:
         raise NotImplementedError
 
     def entry(self, *args, **kwargs):
         asyncio.run(self.run(*args, **kwargs))
+
+    async def run(self, user_input: str) -> None:
+        _graph = self.graph()
+        _persistence = self.persistence()
+        _state, _node = await self.recover(user_input)
+
+        async with _graph.iter(_node, state=_state, persistence=_persistence, deps=self.deps) as run:
+            while _node := await run.next():
+                if issubclass(type(_node), NodeToHalt):
+                    break
+                elif isinstance(_node, End):
+                    break

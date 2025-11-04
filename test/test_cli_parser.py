@@ -93,7 +93,7 @@ def test_ls_with_default_params():
     assert namespace.snapshot == -1
     assert namespace.field == ""
 
-    
+
 def test_config_without_param():
     namespace = parser.parse_args(["config"])
     assert namespace.command == "config"
@@ -102,7 +102,8 @@ def test_config_without_param():
     assert namespace.edit is False
     assert namespace.which is False
     assert namespace.show is False
-    
+
+
 def test_config_with_set():
     namespace = parser.parse_args(["config", "--set", "a=b", "c=d"])
     assert namespace.command == "config"
@@ -112,6 +113,7 @@ def test_config_with_set():
     assert namespace.which is False
     assert namespace.show is False
 
+
 def test_config_with_unset():
     namespace = parser.parse_args(["config", "--unset", "a", "b"])
     assert namespace.command == "config"
@@ -119,7 +121,8 @@ def test_config_with_unset():
     assert namespace.unset_keys == ["a", "b"]
     assert namespace.edit is False
     assert namespace.which is False
-    assert namespace.show is False 
+    assert namespace.show is False
+
 
 def test_config_with_edit_flag():
     namespace = parser.parse_args(["config", "--edit"])
@@ -128,7 +131,8 @@ def test_config_with_edit_flag():
     assert namespace.unset_keys is None
     assert namespace.edit is True
     assert namespace.which is False
-    assert namespace.show is False 
+    assert namespace.show is False
+
 
 def test_config_with_which_flag():
     namespace = parser.parse_args(["config", "--which"])
@@ -137,7 +141,8 @@ def test_config_with_which_flag():
     assert namespace.unset_keys is None
     assert namespace.edit is False
     assert namespace.which is True
-    assert namespace.show is False 
+    assert namespace.show is False
+
 
 def test_config_with_show_flag():
     namespace = parser.parse_args(["config", "--show"])

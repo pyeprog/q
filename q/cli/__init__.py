@@ -1,4 +1,4 @@
-from q.cli.entry_point import create_query, info, ls, print_config, query, set_config, unset_config
+from q.cli.entry_point import add_workflow_mod, create_query, info, ls, print_config, print_workflow, query, rm_workflow_mod, set_config, unset_config
 from q.cli.parser import parser
 
 
@@ -22,13 +22,22 @@ def main():
         case "config":
             if args.key_value_strs:
                 set_config(key_value_strs=args.key_value_strs)
-            
+
             elif args.unset_keys:
                 unset_config(keys=args.unset_keys)
-                
+
             else:
                 print_config()
 
+        case "workflow" | "w":
+            if args.workflow_mods_to_add:
+                add_workflow_mod(args.workflow_mods_to_add)
+
+            elif args.workflow_mods_to_rm:
+                rm_workflow_mod(args.workflow_mods_to_rm)
+
+            else:
+                print_workflow()
+
         case _:
-            print("Unknown command")
-            exit(1)
+            _parser.parse_args(["--help"])

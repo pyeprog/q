@@ -59,20 +59,18 @@ q ls --snapshot latest --field <name>
 
 ### config
 
-Answer these questions:
-
-what should we config?
-- keys of platforms
-- default model
-
-how should we config?
-- open editor, edit then save
-- set or unset them directly through cli
-
 ```bash
 q config --set key1=value1 key2=value2
 q config --unset key1 key2
 q config  # print content of the config and path of the config file
+```
+
+### workflow
+
+```bash
+q workflow # list all available workflows
+q workflow --add <py-file-or-py-mod>
+q workflow --rm <name>
 ```
 
 ## TODO
@@ -92,9 +90,16 @@ q config  # print content of the config and path of the config file
     - [x] make a dict for platform keys
     - [x] implement initializer for centralized config file, which is used to save keys
     - [x] implement for creating .env file for local query directory
+- [x] command for workflow managing including installing / removing / listing
+    - [x] init directory
+    - [x] iterate through the directory and fetch each workflows
+    - [x] use workflow file or mod inside the workflow directory
+    - [x] remove workflow
+    - [x] add workflow
 - [ ] command for tool managing including installing / removing / listing
-- [ ] command for workflow managing including installing / removing / listing
 - [ ] improve response readability, consider delimiter / markdown enhancement / border
+- [ ] support for reading in stdin
+- [ ] support for file attach in chatting
 
 ## cancelled
 - [ ] switching to other workflow from origin one(reason: graph is not matched, thus we should choose a workflow while creating the conversation)

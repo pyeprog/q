@@ -55,13 +55,3 @@ class DeepResearchWorkflow(BaseWorkflow):
             node.set(user_input)
 
         return state, node
-
-    async def run(self, user_input: str) -> None:
-        _graph = self.graph()
-        _persistence = self.persistence()
-        _state, _node = await self.recover(user_input)
-
-        async with _graph.iter(_node, state=_state, persistence=_persistence, deps=self.deps) as run:
-            while _node := await run.next():
-                if isinstance(_node, (UserRevise, Halt)):
-                    break

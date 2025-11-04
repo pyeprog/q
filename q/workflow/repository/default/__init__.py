@@ -29,12 +29,3 @@ class ChatWorkflow(BaseWorkflow):
         node = Chat(user_input)
 
         return state, node
-
-    async def run(self, user_input: str):
-        _graph = self.graph()
-        _persistence = self.persistence()
-        _state, _node = await self.recover(user_input)
-
-        async with _graph.iter(_node, state=_state, persistence=_persistence, deps=self.deps) as run:
-            while (_node := await run.next()) and not isinstance(_node, Halt):
-                pass
