@@ -67,7 +67,7 @@ def create_duckduckgo_search_tool(max_results: int = 5, max_retries: int | None 
 
 class ToolMap:
     def __init__(self):
-        self._dict = {
+        self.dict = {
             "think_tool": think_tool,
             "tavily_search_tool": create_tavily_search_tool(),
             "tavily_search_tool_3_retries": create_tavily_search_tool(max_retries=3),
@@ -76,4 +76,4 @@ class ToolMap:
         }
 
     def get[T](self, key: str, default: T | None = None) -> Callable | T:
-        return self._dict.get(key, default)
+        return self.dict.get(key, default)

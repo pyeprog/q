@@ -22,7 +22,8 @@ class SayHi(BaseNode[State, BaseDeps]):
 
 
 class MockFlow(BaseWorkflow):
-    def graph(self) -> Graph[State, BaseDeps]:
+    @classmethod
+    def graph(cls) -> Graph[State, BaseDeps]:
         return Graph(nodes=(SayHi,), state_type=State)
 
     def persistence(self) -> BaseStatePersistence:

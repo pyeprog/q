@@ -18,8 +18,9 @@ class BaseWorkflow(ABC):
     def __init__(self, deps: BaseDeps | None = None) -> None:
         self.deps = deps or BaseDeps()
 
+    @classmethod
     @abstractmethod
-    def graph(self) -> Graph[State, BaseDeps]:
+    def graph(cls) -> Graph[State, BaseDeps]:
         raise NotImplementedError
 
     @abstractmethod

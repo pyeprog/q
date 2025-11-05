@@ -55,9 +55,9 @@ class Review(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
                 BackToResearchPlanning,
             ),
         ):
-            print(f"[{type(response.output).__name__}] {response.output.feedback}")
+            ctx.deps.console.set_title(type(response.output).__name__).print(response.output.feedback)
         else:
-            print(f"[research done]\n{response.output.report}")
+            ctx.deps.console.set_title("Research Done").print(response.output.report)
 
         return Halt(response.output)
 

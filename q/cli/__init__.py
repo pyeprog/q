@@ -1,4 +1,19 @@
-from q.cli.entry_point import add_workflow_mod, create_query, info, ls, print_config, print_workflow, query, rm_workflow_mod, set_config, unset_config
+import sys
+from q.cli.entry_point import (
+    add_tool_mod,
+    add_workflow_mod,
+    create_query,
+    info,
+    ls,
+    print_config,
+    print_tools,
+    print_workflows,
+    query,
+    rm_tool_mod,
+    rm_workflow_mod,
+    set_config,
+    unset_config,
+)
 from q.cli.parser import parser
 
 
@@ -8,7 +23,11 @@ def main():
 
     match args.command:
         case "say" | "s":
-            query(user_input=args.prompt, extra_tools=args.extra_tools)
+            if not args.prompt:
+                print("prompt query should not be empty", file=sys.stderr)
+                exit(1)
+
+            query(user_input=args.prompt, extra_tools=args.extra_tools, plain=args.plain)
 
         case "create" | "c":
             create_query(directory=args.directory, workflow=args.workflow, refer_dir=args.refer_dir)
@@ -37,7 +56,17 @@ def main():
                 rm_workflow_mod(args.workflow_mods_to_rm)
 
             else:
-                print_workflow()
+                print_workflows()
+
+        case "tool" | "t":
+            if args.tool_mods_to_add:
+                add_tool_mod(args.tool_mods_to_add)
+
+            elif args.tool_mods_to_rm:
+                rm_tool_mod(args.tool_mods_to_rm)
+
+            else:
+                print_tools()
 
         case _:
             _parser.parse_args(["--help"])

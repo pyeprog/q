@@ -53,7 +53,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         )
         ctx.state.superviser_message_history += response.new_messages()
 
-        print(response.output)
+        ctx.deps.console.set_title("superviser").print(response.output)
 
         return Review(response.output)
 

@@ -8,7 +8,9 @@ from typing import Callable
 
 from pydantic_graph.persistence.file import FileStatePersistence
 from pydantic_graph.persistence import Snapshot
+from rich.table import Column, Table
 import toml
+from q.cli.console import console
 from q.workflow.repository import WORKFLOW_MAP
 from q.workflow.persistence import PERSISTENCE_FILENAME
 from q.workflow.util.config import LocalConfigLoader, WorkflowConfig
@@ -16,17 +18,23 @@ from q.workflow.agent.tool import ToolMap
 from q.workflow.util.config import load_config, save_config
 from q.workflow.util.deps import BaseDeps
 from q.cli.config import centralized_config
-from q.cli.workflow import workflow_manager
+from q.cli.manager.workflow import workflow_manager
+from q.cli.manager.tool import tool_manager
 from q.workflow.util.node import ConfigurableNode
+from q.cli.console import console
 
 
-def query(user_input: str, extra_tools: list[str] | None = None):
+def query(user_input: str, extra_tools: str | None = None, plain: bool = False):
     """start querying with AI agent
 
     Args:
         user_input (str): user's prompt
         extra_tool (list[str]): extra function tools
+        config_path (str): path to config file
+        plain (bool): whether to print plain text without rich formatting
     """
+    assert user_input, "user_input should not be empty"
+
     workflow_config = load_config()
 
     workflow_cls = workflow_manager.workflow_map.get(workflow_config.workflow_name, None)
@@ -38,11 +46,17 @@ def query(user_input: str, extra_tools: list[str] | None = None):
         )
         exit(1)
 
-    extra_tools = extra_tools or []
-    tool_map = ToolMap()
-    tools: list[Callable] = [tool_map.get(t) for t in extra_tools]
+    tool_map = tool_manager.tool_map
+    tools: list[Callable] = []
+    existed_tool_names: set[str] = workflow_config.tools_names
+    for tool_name in {name.strip() for name in (extra_tools or "").split(',')}:
+        if tool_name in existed_tool_names: # once tool existed already in agent config, skip it
+            continue
 
-    workflow = workflow_cls(BaseDeps(tools))
+        if tool := tool_map.get(tool_name):
+            tools.append(tool)
+
+    workflow = workflow_cls(BaseDeps(extra_tools=tools, console=console.set_plain(plain)))
     workflow.entry(user_input)
 
 
@@ -165,13 +179,10 @@ def info(directory: str | Path):
 
     async def _helper():
         loader = LocalConfigLoader(directory, workflow_manager.workflow_map)
-        print("these fields are supported: ", " | ".join([field.name for field in fields(loader.state_type)]))  # type: ignore
+        console.set_title("available fields").print(",".join([field.name for field in fields(loader.state_type)])) # type: ignore
 
         if snapshots := await loader.snapshots():
-            print(
-                f"there are {len(snapshots)} versions of snapshot, index `[0-{len(snapshots) - 1}]`"
-                "or `latest` to retrive the last one, if not given, the default will be latest"
-            )
+            console.set_title("snapshot index").print(f"[0-{len(snapshots) - 1}]")
 
     asyncio.run(_helper())
 
@@ -201,16 +212,17 @@ def ls(directory: str | Path, snapshot: int, field: str):
         for msg in getattr(state, chosen_field):
             for part in getattr(msg, "parts", []):
                 if hasattr(part, "content"):
-                    print(part.content)
+                    console.set_title(msg.kind).print(part.content)
 
     asyncio.run(_helper())
 
 
 def print_config():
     """print all config key-value pairs stored in centralized config file"""
-    print(f"[config file is at {str(centralized_config.file_path)}]", end="\n" * 2)
-    for key, value in centralized_config.config.items():
-        print(f"{key} = {value}")
+    console.set_title("config file").print(str(centralized_config.file_path))
+
+    key_values = "\n".join([f"{key} = {value}" for key, value in centralized_config.config.items()])
+    console.set_title("content").print(key_values)
 
 
 def set_config(key_value_strs: list[str]):
@@ -241,30 +253,69 @@ def unset_config(keys: list[str]):
     centralized_config.unset(keys)
 
 
-def print_workflow():
+def print_workflows():
     """print all workflows"""
-    print("WORKFLOW \t MODULE \t DELETABLE")
-    for module in workflow_manager.workflow_modules:
-        for cls in module.workflow_classes:
-            print(f"{cls.__name__} \t {module.mod_name} \t True")
-            
-    for name in WORKFLOW_MAP.keys():
-        print(f"{name} \t Internal \t False")
+    table = Table()
+    table.add_column("Workflow", style="cyan")
+    table.add_column("Module", style="magenta")
+    table.add_column("Deletable", style="green", justify="right")
 
+    for module in workflow_manager.modules:
+        for cls in module.workflow_classes:
+            table.add_row(cls.__name__, module.mod_name, "True")
+
+    for name in WORKFLOW_MAP.keys():
+        table.add_row(name, "Internal", "False")
         
+    console.print(table)
+
+
 def rm_workflow_mod(workflow_mod_names: list[str]):
     """remove workflow modules by given module names, invalid name will be ignored
 
     Args:
         workflow_mod_names (list[str]): list of module names
     """
-    workflow_manager.rm_workflow_modules(workflow_mod_names=workflow_mod_names)
-    
+    workflow_manager.rm_modules(workflow_mod_names)
+
 
 def add_workflow_mod(workflow_mod_paths: list[str | Path]):
     """add workflow modules by given paths(either python file path or python module directory path)
 
     Args:
-        workflow_mod_paths (list[str  |  Path]): module path
+        workflow_mod_paths (list[str  |  Path]): module paths
     """
-    workflow_manager.add_workflow_modules(workflow_mod_paths)
+    workflow_manager.add_modules(workflow_mod_paths)
+
+
+def print_tools():
+    """print all tools"""
+    table = Table()
+    table.add_column("Tool", style="cyan")
+    table.add_column("Module", style="magenta")
+    table.add_column("Deletable", style="green", justify="right")
+    for module in tool_manager.modules:
+        for tool in module.tool_functions:
+            table.add_row(tool.__name__, module.mod_name, "True")
+
+    for name in ToolMap().dict.keys():
+        table.add_row(name, "Internal", "False")
+
+    console.print(table)
+
+def rm_tool_mod(tool_mod_names: list[str]):
+    """remove tool modules by given module names, invalid name will be ignored
+
+    Args:
+        tool_mod_names (list[str]): list of module names
+    """
+    tool_manager.rm_modules(tool_mod_names)
+
+
+def add_tool_mod(tool_mod_paths: list[str | Path]):
+    """add tool modules by given paths(either python file path or python module directory path)
+
+    Args:
+        tool_mod_paths (list[str  |  Path]): module paths
+    """
+    tool_manager.add_modules(tool_mod_paths)

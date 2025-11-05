@@ -40,7 +40,7 @@ class Chat(BaseNode[DefaultState, BaseDeps], ConfigurableNode):
         )
 
         ctx.state.message_history += response.new_messages()
-        print(response.output)
+        ctx.deps.console.set_title("chatter").print(response.output)
 
         return Halt()
 

@@ -1,0 +1,208 @@
+[
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-05T05:16:36.046831Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_0UZs58sIKNyBJU7OH7Qd",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 236,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-05T05:16:37Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1762319797-aspFtI0LcAHoCQJ9GDdn",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_0UZs58sIKNyBJU7OH7Qd",
+              "metadata": null,
+              "timestamp": "2025-11-05T05:16:37.961707Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 273,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-05T05:16:38Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1762319798-DUNuUln8kovG9xJU03Yv",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-05T05:19:44.456484Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_NRdmC0UixxK44dHK8CoG",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 302,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-05T05:19:45Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1762319985-IDxXQ8doJy1IWBK3lt5T",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_NRdmC0UixxK44dHK8CoG",
+              "metadata": null,
+              "timestamp": "2025-11-05T05:19:45.971702Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 339,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-05T05:19:46Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1762319986-sbkNfGdWxlzbfLdW6qkd",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "created",
+    "kind": "node",
+    "id": "Halt:f2f02ea78402452e8376a374204cfc8a"
+  }
+]

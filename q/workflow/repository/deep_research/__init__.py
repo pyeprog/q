@@ -20,7 +20,8 @@ from q.workflow.util.deps import BaseDeps
 
 
 class DeepResearchWorkflow(BaseWorkflow):
-    def graph(self) -> Graph[DeepResearchState, BaseDeps]:
+    @classmethod
+    def graph(cls) -> Graph[DeepResearchState, BaseDeps]:
         return Graph(
             nodes=(Revise, UserRevise, Plan, Supervise, Review, Halt),
             state_type=DeepResearchState,
@@ -48,10 +49,9 @@ class DeepResearchWorkflow(BaseWorkflow):
             elif isinstance(node.review, BackToResearchConducting):
                 node = Supervise(node.review.feedback + "\n" + user_input)
             else:  # SubmitReport
-                print(node.review.report)
                 exit(0)
 
         elif isinstance(node, UserRevise):
-            node.set(user_input)
+            node.input_ = user_input
 
         return state, node

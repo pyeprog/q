@@ -39,7 +39,7 @@ class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         response = await agent.run(self.user_requirement, message_history=ctx.state.research_plan)
         ctx.state.research_plan += response.new_messages()[-1:]
 
-        print(response.output)
+        ctx.deps.console.set_title("planner").print(response.output)
 
         return Supervise(response.output)
 

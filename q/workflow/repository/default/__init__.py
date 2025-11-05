@@ -12,7 +12,8 @@ from q.workflow.repository.default.halt import Halt
 
 
 class ChatWorkflow(BaseWorkflow):
-    def graph(self) -> Graph[DefaultState, BaseDeps]:
+    @classmethod
+    def graph(cls) -> Graph[DefaultState, BaseDeps]:
         return Graph(nodes=(Chat, Halt), state_type=DefaultState)
 
     def persistence(self) -> FileLatestSnapshotPersistence:

@@ -26,10 +26,6 @@ class ContinueRevising(BaseModel):
 class UserRevise(BaseNode[DeepResearchState, BaseDeps], NodeToHalt):
     input_: str = field(default="")
 
-    def set(self, input_: str):
-        self.input_ = input_
-        return self
-
     async def run(self, ctx: GraphRunContext[DeepResearchState]) -> "Revise":
         return Revise(self.input_)
 
@@ -52,10 +48,10 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         ctx.state.reviser_message_history += response.new_messages()
 
         if isinstance(response.output, ContinueRevising):
-            print(response.output.further_inquiry)
+            ctx.deps.console.set_title("reviser").print(response.output.further_inquiry)
             return UserRevise()
 
-        print(response.output.content)
+        ctx.deps.console.set_title("reviser").print(response.output.content)
         ctx.state.user_requirement += response.new_messages()[-1:]
 
         return Plan(response.output.content)

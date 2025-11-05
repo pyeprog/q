@@ -21,11 +21,22 @@ def test_say_helper():
 
 
 def test_say_with_extra_tools():
-    namespace = parser.parse_args(["say", "user prompt here", "--extra_tools", "think_tool", "think_tool"])
+    namespace = parser.parse_args(["say", "user prompt here", "-t", "think_tool1, think_tool2"])
     assert namespace.command == "say"
     assert namespace.prompt == "user prompt here"
-    assert namespace.extra_tools == ["think_tool", "think_tool"]
-
+    assert namespace.extra_tools == "think_tool1, think_tool2"
+    
+def test_s_with_extra_tools_in_different_order():
+    namespace = parser.parse_args(['s', '-t', 'employees', "who is employee with id 3241?"])
+    assert namespace.command == 's'
+    assert namespace.prompt == "who is employee with id 3241?"
+    assert namespace.extra_tools == 'employees'
+    
+def test_s_without_tool():
+    namespace = parser.parse_args(["say", "user prompt here"])
+    assert namespace.command == "say"
+    assert namespace.prompt == "user prompt here"
+    assert namespace.extra_tools == None
 
 def test_create_helper():
     with pytest.raises(SystemExit):

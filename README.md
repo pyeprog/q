@@ -73,6 +73,14 @@ q workflow --add <py-file-or-py-mod>
 q workflow --rm <name>
 ```
 
+### tool
+
+```bash
+q tool # list all available tools
+q tool --add <py-file-or-py-mod>
+q tool --rm <name>
+```
+
 ## TODO
 
 - [x] customized file persistence (inheritted from FileStatePersisence of pydantic_graph)
@@ -91,16 +99,31 @@ q workflow --rm <name>
     - [x] implement initializer for centralized config file, which is used to save keys
     - [x] implement for creating .env file for local query directory
 - [x] command for workflow managing including installing / removing / listing
-    - [x] init directory
+    - [x] init directory for workflows
     - [x] iterate through the directory and fetch each workflows
     - [x] use workflow file or mod inside the workflow directory
     - [x] remove workflow
     - [x] add workflow
-- [ ] command for tool managing including installing / removing / listing
+- [x] command for tool managing including installing / removing / listing
+    - [x] init directory for tools
+    - [x] iterate through directory to list tools
+    - [x] use tools (extra tool)
+    - [x] rm tool modules
+    - [x] add tool modules
 - [ ] improve response readability, consider delimiter / markdown enhancement / border
+    - [x] make the "list" subcommand print table
+    - [ ] make the conversation return readable
+        - [x] support markdown
+        - [x] prettify markdown(fix bugs)
+        - [x] separate input and output, mark the agent's name on the panel
+        - [x] print content with panel when output to stdout, otherwise without panel
+        - [ ] make request and response be in panel with different color
+        - [ ] make a predicator for markdown text
+    - [ ] make tool calling & result print prettier
 - [ ] support for reading in stdin
 - [ ] support for file attach in chatting
 
 ## cancelled
 - [ ] switching to other workflow from origin one(reason: graph is not matched, thus we should choose a workflow while creating the conversation)
 - [ ] edit message of a particular version of state(reason: it's not possible to make it readable and supporting adding, editing and deleting at the same time)
+
