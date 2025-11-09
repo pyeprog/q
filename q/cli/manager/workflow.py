@@ -1,5 +1,5 @@
 from copy import deepcopy
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 import inspect
 from types import ModuleType
 

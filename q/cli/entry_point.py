@@ -6,11 +6,19 @@ import subprocess
 import sys
 from typing import Callable
 
+from pydantic_ai.messages import (
+    BaseToolCallPart,
+    BaseToolReturnPart,
+    FilePart,
+    RetryPromptPart,
+    TextPart,
+    ThinkingPart,
+    UserPromptPart,
+)
 from pydantic_graph.persistence.file import FileStatePersistence
 from pydantic_graph.persistence import Snapshot
-from rich.table import Column, Table
+from rich.table import Table
 import toml
-from q.cli.console import console
 from q.workflow.repository import WORKFLOW_MAP
 from q.workflow.persistence import PERSISTENCE_FILENAME
 from q.workflow.util.config import LocalConfigLoader, WorkflowConfig
@@ -21,7 +29,8 @@ from q.cli.config import centralized_config
 from q.cli.manager.workflow import workflow_manager
 from q.cli.manager.tool import tool_manager
 from q.workflow.util.node import ConfigurableNode
-from q.cli.console import console
+from q.cli.console import CliConsole, panel_param_by_content, console
+from q.workflow.util.output import ExtraParam
 
 
 def query(user_input: str, extra_tools: str | None = None, plain: bool = False):
@@ -48,15 +57,21 @@ def query(user_input: str, extra_tools: str | None = None, plain: bool = False):
 
     tool_map = tool_manager.tool_map
     tools: list[Callable] = []
-    existed_tool_names: set[str] = workflow_config.tools_names
-    for tool_name in {name.strip() for name in (extra_tools or "").split(',')}:
-        if tool_name in existed_tool_names: # once tool existed already in agent config, skip it
+    existed_tool_names: set[str] = workflow_config.tools_names()
+    for tool_name in {name.strip() for name in (extra_tools or "").split(",")}:
+        if tool_name in existed_tool_names:  # once tool existed already in agent config, skip it
             continue
 
         if tool := tool_map.get(tool_name):
             tools.append(tool)
 
-    workflow = workflow_cls(BaseDeps(extra_tools=tools, console=console.set_plain(plain)))
+    workflow = workflow_cls(
+        BaseDeps(
+            extra_tools=tools,
+            console=CliConsole(plain),
+            gen_agent_extra_param=lambda title: ExtraParam(panel_param_by_content(title)),
+        )
+    )
     workflow.entry(user_input)
 
 
@@ -179,10 +194,13 @@ def info(directory: str | Path):
 
     async def _helper():
         loader = LocalConfigLoader(directory, workflow_manager.workflow_map)
-        console.set_title("available fields").print(",".join([field.name for field in fields(loader.state_type)])) # type: ignore
+        console.print(
+            ",".join([field.name for field in fields(loader.state_type)]),  # type: ignore
+            extra_param=ExtraParam(panel_param_by_content("Available Fields")),
+        )
 
         if snapshots := await loader.snapshots():
-            console.set_title("snapshot index").print(f"[0-{len(snapshots) - 1}]")
+            console.print(f"[0-{len(snapshots) - 1}]", extra_param=ExtraParam(panel_param_by_content("Snapshot Index")))
 
     asyncio.run(_helper())
 
@@ -211,18 +229,43 @@ def ls(directory: str | Path, snapshot: int, field: str):
 
         for msg in getattr(state, chosen_field):
             for part in getattr(msg, "parts", []):
-                if hasattr(part, "content"):
-                    console.set_title(msg.kind).print(part.content)
+                if isinstance(part, UserPromptPart):
+                    console.print(part.content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
+
+                elif isinstance(part, BaseToolCallPart):
+                    lines: list[str] = []
+                    for key, value in part.args_as_dict().items():
+                        if hasattr(value, "__str__"):  # value is printable
+                            lines.append(f"# {key}")
+                            lines.append(value)
+
+                    content = "\n".join(lines)
+                    console.print(
+                        content, extra_param=ExtraParam(panel_param_by_content(getattr(part, "part_kind", "tool-call")))
+                    )
+
+                elif isinstance(part, BaseToolReturnPart):
+                    console.print(
+                        part.content,
+                        extra_param=ExtraParam(panel_param_by_content(getattr(part, "part_kind", "tool-return"))),
+                    )
+
+                elif isinstance(part, (RetryPromptPart, TextPart, ThinkingPart)):
+                    console.print(part.content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
+
+                elif isinstance(part, FilePart):
+                    content = f"{part.id} from {part.provider_name}"
+                    console.print(content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
 
     asyncio.run(_helper())
 
 
 def print_config():
     """print all config key-value pairs stored in centralized config file"""
-    console.set_title("config file").print(str(centralized_config.file_path))
+    console.print(str(centralized_config.file_path), extra_param=ExtraParam(panel_param_by_content("Config file")))
 
     key_values = "\n".join([f"{key} = {value}" for key, value in centralized_config.config.items()])
-    console.set_title("content").print(key_values)
+    console.print(key_values, extra_param=ExtraParam(panel_param_by_content("Content")))
 
 
 def set_config(key_value_strs: list[str]):
@@ -266,7 +309,7 @@ def print_workflows():
 
     for name in WORKFLOW_MAP.keys():
         table.add_row(name, "Internal", "False")
-        
+
     console.print(table)
 
 
@@ -302,6 +345,7 @@ def print_tools():
         table.add_row(name, "Internal", "False")
 
     console.print(table)
+
 
 def rm_tool_mod(tool_mod_names: list[str]):
     """remove tool modules by given module names, invalid name will be ignored

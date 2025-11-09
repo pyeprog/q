@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+from typing import ClassVar
+from pydantic.fields import Field
 from pydantic.main import BaseModel
 from pydantic_ai.agent import Agent
 from pydantic_ai.format_prompt import format_as_xml
@@ -14,55 +16,67 @@ from q.workflow.util.node import ConfigurableNode, NodeToHalt
 from q.workflow.util.typing import AgentConfigMap
 
 
-class UserRequirement(BaseModel):
-    content: str
+class UserConfirming(BaseModel):
+    requirement_draft: str = Field(
+        description="the drafted user requirement to be confirmed by user, in markdown format"
+    )
 
 
 class ContinueRevising(BaseModel):
-    further_inquiry: str
+    further_inquiry: str = Field(description="further questions to ask user to clarify requirement, in markdown format")
+
+
+class UserConfirmed(BaseModel):
+    final_requirement: str = Field(description="the final confirmed user requirement, in markdown format")
 
 
 @dataclass
 class UserRevise(BaseNode[DeepResearchState, BaseDeps], NodeToHalt):
-    input_: str = field(default="")
+    user_input: str = field(default="")
 
     async def run(self, ctx: GraphRunContext[DeepResearchState]) -> "Revise":
-        return Revise(self.input_)
+        return Revise(self.user_input)
 
 
 @dataclass
 class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
-    input_: str
+    user_input: str
+    agent_name: ClassVar[str] = "reviser"
 
     async def run(self, ctx: GraphRunContext[DeepResearchState, BaseDeps]) -> UserRevise | Plan:
-        config = load_config().get_agent_config("reviser")
+        config = load_config().get_agent_config(self.agent_name)
         agent = Agent(
             model=config.model,
-            instructions=self.instruction,
-            output_type=UserRequirement | ContinueRevising,
+            system_prompt=self.sys_prompt,
+            output_type=UserConfirming | ContinueRevising | UserConfirmed,
             tools=config.tools + ctx.deps.extra_tools,
-            name="reviser",
+            name=self.agent_name,
         )
 
-        response = await agent.run(self.input_, message_history=ctx.state.reviser_message_history)
+        response = await agent.run(self.user_input, message_history=ctx.state.reviser_message_history)
         ctx.state.reviser_message_history += response.new_messages()
 
+        print_extra_param = ctx.deps.gen_agent_extra_param(self.agent_name)
+
         if isinstance(response.output, ContinueRevising):
-            ctx.deps.console.set_title("reviser").print(response.output.further_inquiry)
+            ctx.deps.console.print(response.output.further_inquiry, extra_param=print_extra_param)
             return UserRevise()
 
-        ctx.deps.console.set_title("reviser").print(response.output.content)
-        ctx.state.user_requirement += response.new_messages()[-1:]
+        elif isinstance(response.output, UserConfirming):
+            ctx.deps.console.print(response.output.requirement_draft, extra_param=print_extra_param)
+            return UserRevise()
 
-        return Plan(response.output.content)
+        ctx.state.user_requirement += response.new_messages()[1:]  # ignore the request message
+
+        return Plan(response.output.final_requirement)
 
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
-        return {"reviser": AgentConfig()}
+        return {cls.agent_name: AgentConfig()}
 
     @property
-    def instruction(self) -> str:
-        _instruction = Instruction(
+    def sys_prompt(self) -> str:
+        prompt = Instruction(
             role="You are an insightful communicator and requirement analysis expert. ",
             task="Your goal is to accurately identify the user's real intentions and needs, generating clear, complete, and actionable requirement descriptions to ensure subsequent work stays on track.",
             assumptions=[
@@ -190,4 +204,4 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             ],
         )
 
-        return format_as_xml(_instruction)
+        return format_as_xml(prompt)

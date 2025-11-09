@@ -1,9 +1,10 @@
+import os
+from pathlib import Path
 from pydantic_ai.messages import TextPart
 from pydantic_graph.graph import Graph
 from pydantic_graph.persistence.in_mem import SimpleStatePersistence
 import pytest
 
-from q.workflow.repository.deep_research.halt import Halt
 from q.workflow.repository.deep_research.planner import Plan
 from q.workflow.repository.deep_research.reviewer import Review
 from q.workflow.repository.deep_research.state import DeepResearchState
@@ -13,7 +14,7 @@ from q.workflow.util.deps import BaseDeps
 
 @pytest.mark.asyncio
 async def test_planner():
-    graph = Graph(nodes=(Plan, Supervise, Review, Halt), state_type=DeepResearchState)
+    graph = Graph(nodes=(Plan, Supervise, Review), state_type=DeepResearchState)
     requirement_text = """
     I need to create a product introduction page, details as follows:
     - Goal: Promote purchases (first month conversion rate target ≥ 3%)
@@ -22,6 +23,7 @@ async def test_planner():
     - Branding: No existing brand guidelines (assuming colors and fonts can be temporarily determined)
     - Delivery time: 2 weeks
 """
+    os.chdir(Path(__file__).parent)
     node = Plan(requirement_text)
     persistence = SimpleStatePersistence()
     state = DeepResearchState()

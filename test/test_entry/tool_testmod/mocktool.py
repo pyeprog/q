@@ -6,7 +6,7 @@ from typing import Literal
 class MockEmployee:
     name: str
     age: int
-    gender: Literal['Male', 'Female']
+    gender: Literal["Male", "Female"]
     salary: int
 
 

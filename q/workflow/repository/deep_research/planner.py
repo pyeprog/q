@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
 from pydantic_ai.agent import Agent
 from pydantic_ai.format_prompt import format_as_xml
@@ -14,41 +15,47 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
-from q.workflow.util.node import ConfigurableNode
+from q.workflow.util.node import Anthropomorphic, ConfigurableNode
+from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
 
 
 @dataclass
-class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
+class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthropomorphic):
     user_requirement: str
+    agent_name: ClassVar[str] = "planner"
 
     async def run(self, ctx: GraphRunContext[DeepResearchState, BaseDeps]) -> Supervise:
         def tool_result_event_handler(e: FunctionToolResultEvent):
-            print(f"[Tool] {self.__class__.__name__} calls {e.tool_call_id!r}")
+            ctx.deps.console.print(
+                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                extra_param=ExtraParam(markdownify=False),
+            )
 
-        config = load_config().get_agent_config("planner")
+        config = load_config().get_agent_config(self.agent_name)
 
         agent = Agent(
             model=config.model,
-            instructions=self.instruction,
+            system_prompt=self.sys_prompt,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             tools=config.tools + ctx.deps.extra_tools,
-            name="planner",
+            name=self.agent_name,
         )
 
         response = await agent.run(self.user_requirement, message_history=ctx.state.research_plan)
-        ctx.state.research_plan += response.new_messages()[-1:]
+        ctx.state.research_plan += response.new_messages()[1:]  # ignore the request message
 
-        ctx.deps.console.set_title("planner").print(response.output)
+        ctx.deps.console.print(response.output, extra_param=ctx.deps.gen_agent_extra_param(self.agent_name))
 
         return Supervise(response.output)
 
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
-        return {"planner": AgentConfig()}
+        return {cls.agent_name: AgentConfig()}
 
-    def instruction(self) -> str:
-        _instruction = Instruction(
+    @property
+    def sys_prompt(self) -> str:
+        prompt = Instruction(
             role="You are a research planner",
             task="You will be given a set of user requirements. Your job is to translate these requirements into a research plan which should be in form of a set of detailed and concrete research questions",
             assumptions=[
@@ -69,4 +76,4 @@ class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             taboos=["The questions raised is about subjective feeling or personal taste"],
         )
 
-        return format_as_xml(_instruction)
+        return format_as_xml(prompt)

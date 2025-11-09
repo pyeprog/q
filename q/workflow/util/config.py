@@ -1,7 +1,7 @@
 from itertools import chain
 from pathlib import Path
 
-from pydantic.fields import Field, computed_field
+from pydantic.fields import Field
 from pydantic.main import BaseModel
 from pydantic_graph.graph import Graph
 from pydantic_graph.persistence.file import BaseStatePersistence, FileStatePersistence
@@ -24,8 +24,6 @@ class WorkflowConfig(BaseModel):
     def get_agent_config(self, agent_name: str) -> AgentConfig:
         return self.agent_config_map[agent_name]
 
-    @computed_field
-    @property
     def tools_names(self) -> set[str]:
         return set(chain.from_iterable([config.tool_names for config in self.agent_config_map.values()]))
 
@@ -33,7 +31,7 @@ class WorkflowConfig(BaseModel):
 def load_config(dir_: str | Path = ".") -> WorkflowConfig:
     path = Path(dir_) / CONFIG_FILENAME
     if not path.exists():
-        raise FileNotFoundError(f"Config file {path} not found.")
+        raise FileNotFoundError(f"Config file {path} not found at {str(Path(dir_).absolute())}.")
 
     return WorkflowConfig.model_validate_json(path.read_bytes())
 

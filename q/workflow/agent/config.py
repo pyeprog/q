@@ -1,10 +1,10 @@
-from importlib import import_module
 from typing import Callable, Literal
 
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 from pydantic_ai.models import Model
 
+from q.workflow.agent.tool import ToolMap
 from q.workflow.agent.util import open_router_model
 
 
@@ -20,5 +20,11 @@ class AgentConfig(BaseModel):
 
     @property
     def tools(self) -> list[Callable]:
-        tool_module = import_module("q.workflow.agent.tool")
-        return [getattr(tool_module, tool_name) for tool_name in self.tool_names if hasattr(tool_module, tool_name)]
+        tool_map = ToolMap()
+        tools: list[Callable] = []
+        for tool_name in self.tool_names:
+            tool = tool_map.get(tool_name)
+            assert tool, "tool '{tool_name}' is not found in tool map"
+            tools.append(tool)
+
+        return tools

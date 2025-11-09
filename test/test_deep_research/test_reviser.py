@@ -1,8 +1,9 @@
+import os
+from pathlib import Path
 from pydantic_graph.graph import Graph
 from pydantic_graph.persistence.in_mem import SimpleStatePersistence
 import pytest
 
-from q.workflow.repository.deep_research.halt import Halt
 from q.workflow.repository.deep_research.planner import Plan
 from q.workflow.repository.deep_research.reviewer import Review
 from q.workflow.repository.deep_research.reviser import Revise, UserRevise
@@ -13,8 +14,10 @@ from q.workflow.util.deps import BaseDeps
 
 @pytest.mark.asyncio
 async def test_reviser_for_video_making():
+    os.chdir(Path(__file__).parent)
+
     graph = Graph(
-        nodes=(Revise, UserRevise, Plan, Supervise, Review, Halt),
+        nodes=(Revise, UserRevise, Plan, Supervise, Review),
         state_type=DeepResearchState,
     )
     state = DeepResearchState()
@@ -45,8 +48,10 @@ async def test_reviser_for_video_making():
 
 @pytest.mark.asyncio
 async def test_reviser_for_joke_making():
+    os.chdir(Path(__file__).parent)
+
     graph = Graph(
-        nodes=(Revise, UserRevise, Plan, Supervise, Review, Halt),
+        nodes=(Revise, UserRevise, Plan, Supervise, Review),
         state_type=DeepResearchState,
     )
     state = DeepResearchState()

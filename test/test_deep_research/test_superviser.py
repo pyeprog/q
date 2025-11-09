@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from pydantic_ai._run_context import RunContext
 from pydantic_ai.messages import (
     ModelRequest,
@@ -15,6 +17,8 @@ from q.workflow.util.deps import BaseDeps
 
 @pytest.mark.asyncio
 async def test_agent_research():
+    os.chdir(Path(__file__).parent)
+
     mock_ctx = RunContext(deps=BaseDeps(), model=open_router_model("google/gemini-2.0-flash-001"), usage=RunUsage())
     result = await Supervise.agent_research(mock_ctx, "list the top 3 most popular framework for web app frontend")
     assert isinstance(result, str)
@@ -24,6 +28,8 @@ async def test_agent_research():
 
 @pytest.mark.asyncio
 async def test_superviser():
+    os.chdir(Path(__file__).parent)
+
     graph = Graph(nodes=(Supervise, Review), state_type=DeepResearchState)
     user_requirement = """
     I need to create a product introduction page, details as follows:
@@ -85,4 +91,3 @@ async def test_superviser():
     async with graph.iter(node, state=state, deps=BaseDeps()) as run:
         node = await run.next()
         assert isinstance(node, Review)
-        print(node.research_report)

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from typing import ClassVar
 
+from faker.proxy import Faker
 from pydantic_ai._run_context import RunContext
 from pydantic_ai.agent import Agent
 from pydantic_ai.format_prompt import format_as_xml
@@ -17,13 +19,16 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
-from q.workflow.util.node import ConfigurableNode
+from q.workflow.util.node import Anthropomorphic, ConfigurableNode
+from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
 
 
 @dataclass
-class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
+class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthropomorphic):
     research_plan: str
+    agent_name: ClassVar[str] = "superviser"
+    sub_agent_name: ClassVar[str] = "researcher"
 
     async def run(self, ctx: GraphRunContext[DeepResearchState, BaseDeps]) -> Review:
         agent_research_tool = Tool(
@@ -33,16 +38,19 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         )
 
         def tool_result_event_handler(e: FunctionToolResultEvent):
-            print(f"[Tool] {self.__class__.__name__} calls {e.tool_call_id!r}")
+            ctx.deps.console.print(
+                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                extra_param=ExtraParam(markdownify=False),
+            )
 
-        config = load_config().get_agent_config("superviser")
+        config = load_config().get_agent_config(self.agent_name)
         agent = Agent(
             model=config.model,
             deps_type=BaseDeps,
-            instructions=self.instruction,
+            system_prompt=self.sys_prompt,
             tools=config.tools + [agent_research_tool] + ctx.deps.extra_tools,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
-            name="superviser",
+            name=self.agent_name,
         )
 
         response = await agent.run(
@@ -53,15 +61,17 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         )
         ctx.state.superviser_message_history += response.new_messages()
 
-        ctx.deps.console.set_title("superviser").print(response.output)
+        ctx.deps.console.print(response.output, extra_param=ctx.deps.gen_agent_extra_param(self.agent_name))
 
-        return Review(response.output)
+        ctx.state.research_report = response.new_messages()[1:]  # ignore the request message
+
+        return Review()
 
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
         return {
-            "superviser": AgentConfig(tool_names=["think_tool"]),
-            "researcher": AgentConfig(
+            cls.agent_name: AgentConfig(tool_names=["think_tool"]),
+            cls.sub_agent_name: AgentConfig(
                 tool_names=[
                     "think_tool",
                     "tavily_search_tool_3_retries",
@@ -70,8 +80,8 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             ),
         }
 
-    @staticmethod
-    async def agent_research(ctx: RunContext[BaseDeps], research_topic: str) -> str:
+    @classmethod
+    async def agent_research(cls, ctx: RunContext[BaseDeps], research_topic: str) -> str:
         """
         Conducts comprehensive research on a given topic and returns detailed findings.
         This function performs in-depth research on any topic by leveraging an AI research agent
@@ -121,17 +131,22 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             output_formats=["plain text, no markdown text decoration, like bold, italic and so on"],
         )
 
-        def tool_result_event_handler(e: FunctionToolResultEvent):
-            print(f"\t[Tool] researcher calls {e.tool_call_id!r}")
+        human_name = Faker().name()
 
-        config = load_config().get_agent_config("researcher")
+        def tool_result_event_handler(e: FunctionToolResultEvent):
+            ctx.deps.console.print(
+                f"🧙[bold magenta]Researcher[/]([green]{human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                extra_param=ExtraParam(markdownify=False),
+            )
+
+        config = load_config().get_agent_config(cls.sub_agent_name)
         agent = Agent(
             model=config.model,
             instructions=format_as_xml(_instruction),
             tools=config.tools + ctx.deps.extra_tools,
             retries=3,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
-            name="researcher",
+            name=cls.sub_agent_name,
         )
         try:
             response = await agent.run(research_topic, usage_limits=UsageLimits(tool_calls_limit=10))
@@ -144,8 +159,8 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         return 100
 
     @property
-    def instruction(self) -> str:
-        _instruction = Instruction(
+    def sys_prompt(self) -> str:
+        prompt = Instruction(
             role="You are a research supervisor. You conduct research and are responsible for the quality of the research output",
             task="You will be given user requirements and a set of questions to direct researching, and your task is to assign proper questions to right researchers, appraise their feedback, decide whether to accept their result or to redo, after all has been done, write the final report without any compression(keep the detail)",
             guidelines=[
@@ -162,4 +177,4 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             taboos=[f"calling tools for more than {self.max_tool_calling_times} times"],
         )
 
-        return format_as_xml(_instruction)
+        return format_as_xml(prompt)

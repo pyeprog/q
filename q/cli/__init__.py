@@ -23,11 +23,20 @@ def main():
 
     match args.command:
         case "say" | "s":
-            if not args.prompt:
+            prompt_lines: list[str] = []
+            if not sys.stdin.isatty():  # receive from pipeline
+                prompt_lines += [line for line in sys.stdin.readlines() if line]
+
+            if args.prompt:
+                prompt_lines.append(args.prompt)
+
+            prompt = "\n".join(prompt_lines)
+
+            if not prompt:
                 print("prompt query should not be empty", file=sys.stderr)
                 exit(1)
 
-            query(user_input=args.prompt, extra_tools=args.extra_tools, plain=args.plain)
+            query(user_input=prompt, extra_tools=args.extra_tools, plain=args.plain)
 
         case "create" | "c":
             create_query(directory=args.directory, workflow=args.workflow, refer_dir=args.refer_dir)

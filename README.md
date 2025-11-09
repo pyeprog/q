@@ -110,18 +110,26 @@ q tool --rm <name>
     - [x] use tools (extra tool)
     - [x] rm tool modules
     - [x] add tool modules
-- [ ] improve response readability, consider delimiter / markdown enhancement / border
+- [x] improve response readability, consider delimiter / markdown enhancement / border
     - [x] make the "list" subcommand print table
-    - [ ] make the conversation return readable
+    - [x] make the conversation return readable
         - [x] support markdown
         - [x] prettify markdown(fix bugs)
         - [x] separate input and output, mark the agent's name on the panel
         - [x] print content with panel when output to stdout, otherwise without panel
-        - [ ] make request and response be in panel with different color
-        - [ ] make a predicator for markdown text
-    - [ ] make tool calling & result print prettier
-- [ ] support for reading in stdin
+        - [x] make request and response be in panel with different color
+    - [x] make tool calling & result print prettier
+- [x] revising the research workflow printing
+    - [x] change reviser to UserRevise to Planner
+    - [x] change reviewer so that user can interact with the research result
+    - [x] fix revising bug
+        - [x] change instruction to system prompt
+        - [x] fix revising history gone(no need, this is because status has became error then restart from scratch)
+    - [x] fix ls to print all message
+        - [x] predicate the xml format
+- [x] support for reading in stdin
 - [ ] support for file attach in chatting
+- [ ] recover running after error occurs
 
 ## cancelled
 - [ ] switching to other workflow from origin one(reason: graph is not matched, thus we should choose a workflow while creating the conversation)

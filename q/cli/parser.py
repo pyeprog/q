@@ -18,7 +18,7 @@ def parser():
         "--extra_tools",
         "-t",
         type=str,
-        nargs='?',
+        nargs="?",
         dest="extra_tools",
         help="function tool names separated by comma, check out names using tool subcommand",
         metavar="tool-names",
@@ -62,7 +62,7 @@ def parser():
         nargs="?",
         dest="refer_dir",
         help="specify which qiery directory to refer to",
-        metavar="directory"
+        metavar="directory",
     )
 
     info_parser = subcommand.add_parser("info", help="list meta info about the query")
@@ -84,7 +84,7 @@ def parser():
         nargs="?",
         dest="snapshot",
         help="the index of snapshot, use info to see the range",
-        metavar="[0-x]"
+        metavar="[0-x]",
     )
     ls_parser.add_argument(
         "--field",
@@ -99,10 +99,22 @@ def parser():
 
     config_parser = subcommand.add_parser("config", help="config platform keys, default model, and more")
     config_parser.add_argument(
-        "--set", action="extend", nargs="+", type=str, dest="key_value_strs", help="key=value pairs to set in config", metavar="key=value"
+        "--set",
+        action="extend",
+        nargs="+",
+        type=str,
+        dest="key_value_strs",
+        help="key=value pairs to set in config",
+        metavar="key=value",
     )
     config_parser.add_argument(
-        "--unset", action="extend", nargs="+", type=str, dest="unset_keys", help="keys to unset from config", metavar="key"
+        "--unset",
+        action="extend",
+        nargs="+",
+        type=str,
+        dest="unset_keys",
+        help="keys to unset from config",
+        metavar="key",
     )
 
     workflow_parser = subcommand.add_parser("workflow", aliases=["w"], help="add, remove, list workflows")

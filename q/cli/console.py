@@ -1,47 +1,70 @@
+import hashlib
+import re
 import sys
-from typing import Self
+from rich.color import ANSI_COLOR_NAMES
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
+from rich.style import Style
 
-from q.workflow.util.output import Printable
+from q.workflow.util.output import ExtraParam, PanelParam, Printable, Printer
 
 
+ANSI_COLOR_MAP: dict[int, str] = {v: k for k, v in ANSI_COLOR_NAMES.items() if k not in {"black", "bright_black"}}
 
-class MarkdownConsole:
+
+def pick_color(content: str) -> str:
+    color_idx = int(hashlib.sha256(content.encode("utf-8")).digest()[0])
+    color_list = list(ANSI_COLOR_MAP.values())
+    return color_list[color_idx % len(color_list)]
+
+
+def panel_param_by_content(panel_title: str) -> PanelParam:
+    return PanelParam(title=panel_title, border_style=Style(color=pick_color(panel_title), dim=False))
+
+
+class CliConsole(Printer):
     def __init__(self, plain: bool = False) -> None:
-        self._console = Console(soft_wrap=True)
-        self._title = ""
+        self._console = Console()
         self._plain = plain
-        
-    def set_title(self, title: str) -> Self:
-        self._title = title
-        return self
-    
-    def set_plain(self, plain: bool) -> Self:
-        self._plain = plain
-        return self
-    
-    def preprocess(self, s: str):
+
+    def is_markdown(self, s: str) -> bool:
+        if re.findall(r"<\/(\S+)>", s):
+            return False  # xml
+
+        return True
+
+    def markdownify(self, s: str):
         string = s.strip()
         if string.startswith("```markdown") and string.endswith("```"):
-            # unwrap the markdown content from the block
+            # sometimes ai agent will output content wrapped in markdown block, and sometimes not
+            # we unwrap the markdown content from the block in order to print with markdown styling
             string = string.removeprefix("```markdown").removesuffix("```")
-            return Markdown(string)
-    
-        lines = string.split('\n')
-        if any([line.startswith('# ') for line in lines]):
-            return Markdown(string)
-    
-        return s # keep it unchanged in this case
+
+        return Markdown(string)
+
+    def print(
+        self,
+        *objects: Printable,
+        sep: str = " ",
+        end: str = "\n",
+        style: str | Style | None = None,
+        extra_param: ExtraParam | None = None,
+    ) -> None:
+        for content in objects:
+            if not self._plain and sys.stdout.isatty() and isinstance(content, str):
+                if extra_param and self.is_markdown(content) and extra_param.markdownify:
+                    content = self.markdownify(content)
+
+                if extra_param and extra_param.panel_param:
+                    content = Panel(
+                        content,
+                        border_style=extra_param.panel_param.border_style,
+                        title=extra_param.panel_param.title,
+                        title_align=extra_param.panel_param.title_align,
+                    )
+
+            self._console.print(content, sep=sep, end=end, style=style)
 
 
-    def print(self, any: Printable) -> None:
-        content = any
-        if not self._plain and sys.stdout.isatty() and isinstance(content, str):
-            content = self.preprocess(content)
-            content = Panel(content, border_style="dim", title=self._title, title_align="left")
-        self._console.print(content)
-        
-
-console = MarkdownConsole()
+console = CliConsole(plain=False)
