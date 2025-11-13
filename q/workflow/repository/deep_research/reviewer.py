@@ -10,6 +10,7 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.misc import unique
 from q.workflow.util.node import ConfigurableNode, NodeToHalt
 from q.workflow.util.typing import AgentConfigMap
 from pydantic.main import BaseModel
@@ -39,7 +40,7 @@ class Review(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, NodeToHalt
         agent = Agent(
             model=config.model,
             system_prompt=self.sys_prompt,
-            tools=config.tools + ctx.deps.extra_tools,
+            tools=unique(config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
             output_type=DeepenResearch | ContinueReviewing,
             name=self.agent_name,
         )
@@ -73,7 +74,7 @@ class Review(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, NodeToHalt
 
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
-        return {cls.agent_name: AgentConfig(tool_names=["think_tool"])}
+        return {cls.agent_name: AgentConfig(tool_names=["think"])}
 
     @property
     def sys_prompt(self) -> str:

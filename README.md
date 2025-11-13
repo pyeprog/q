@@ -83,6 +83,8 @@ q tool --rm <name>
 
 ## TODO
 
+### Version 0.1
+
 - [x] customized file persistence (inheritted from FileStatePersisence of pydantic_graph)
 - [x] implement a default chatting workflow
 - [x] implement the legacy deep research workflow
@@ -128,10 +130,23 @@ q tool --rm <name>
     - [x] fix ls to print all message
         - [x] predicate the xml format
 - [x] support for reading in stdin
+
+
+### Version 0.2
+- [ ] register mcp and use mcp as tool
+- [ ] create an internal workflow of extensive internet searching
 - [ ] support for file attach in chatting
 - [ ] recover running after error occurs
+- [ ] clarify how to "edit" the message history
+- [ ] the last step of research workflow can't do work right, redesign the last part of the workflow to make it responding to user's need
+- [ ] rewrite readme
 
-## cancelled
+### Future Version
+
+- [ ] integrate vector database
+- [ ] integrate memory management
+
+### cancelled
 - [ ] switching to other workflow from origin one(reason: graph is not matched, thus we should choose a workflow while creating the conversation)
 - [ ] edit message of a particular version of state(reason: it's not possible to make it readable and supporting adding, editing and deleting at the same time)
 

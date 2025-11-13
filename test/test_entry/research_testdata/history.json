@@ -1341,7 +1341,7 @@
               "part_kind": "text"
             },
             {
-              "tool_name": "think_tool",
+              "tool_name": "think",
               "args": "{\"thoughts\":[{\"description\":\"Break down the research questions into logical groups for efficient delegation to research agents.\",\"importance\":\"high\"},{\"description\":\"Assign each group of questions to a researcher with clear and specific instructions to avoid ambiguity and ensure focused research.\",\"importance\":\"high\"},{\"importance\":\"high\",\"description\":\"After receiving the initial findings, carefully evaluate the information gathered, identify any gaps or inconsistencies, and re-delegate if necessary to ensure comprehensive coverage of all aspects.\"},{\"importance\":\"high\",\"description\":\"Synthesize all the gathered information into a well-structured and comprehensive report that addresses all the research questions and provides a clear and concise overview of the findings.\"}]}",
               "tool_call_id": "tool_0_think_tool_cV3mpc2GtMpDEPk5wPe1",
               "id": null,

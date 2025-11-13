@@ -68,11 +68,12 @@ def create_duckduckgo_search_tool(max_results: int = 5, max_retries: int | None 
 class ToolMap:
     def __init__(self):
         self.dict = {
-            "think_tool": think_tool,
-            "tavily_search_tool": create_tavily_search_tool(),
-            "tavily_search_tool_3_retries": create_tavily_search_tool(max_retries=3),
-            "duckduckgo_search_tool": create_duckduckgo_search_tool(),
-            "duckduckgo_search_tool_3_retries": create_duckduckgo_search_tool(max_retries=3),
+            "think": think_tool,
+            "tavily_search": create_tavily_search_tool(),
+            "tavily_search_3_retries": create_tavily_search_tool(max_retries=3),
+            "duckduckgo_search": create_duckduckgo_search_tool(),
+            "duckduckgo_search_3_retries": create_duckduckgo_search_tool(max_retries=3),
+            "duckduckgo_search_extensively": create_duckduckgo_search_tool(max_results=30, max_retries=3),
         }
 
     def get[T](self, key: str, default: T | None = None) -> Callable | T:

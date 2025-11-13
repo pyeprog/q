@@ -21,10 +21,10 @@ def test_say_helper():
 
 
 def test_say_with_extra_tools():
-    namespace = parser.parse_args(["say", "user prompt here", "-t", "think_tool1, think_tool2"])
+    namespace = parser.parse_args(["say", "user prompt here", "-t", "think1, think2"])
     assert namespace.command == "say"
     assert namespace.prompt == "user prompt here"
-    assert namespace.extra_tools == "think_tool1, think_tool2"
+    assert namespace.extra_tools == "think1, think2"
 
 
 def test_s_with_extra_tools_in_different_order():

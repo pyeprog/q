@@ -19,6 +19,7 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.misc import unique
 from q.workflow.util.node import Anthropomorphic, ConfigurableNode
 from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
@@ -48,7 +49,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
             model=config.model,
             deps_type=BaseDeps,
             system_prompt=self.sys_prompt,
-            tools=config.tools + [agent_research_tool] + ctx.deps.extra_tools,
+            tools=unique(config.tools + [agent_research_tool] + ctx.deps.extra_tools, key=lambda tool: tool.name),
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             name=self.agent_name,
         )
@@ -70,12 +71,12 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
         return {
-            cls.agent_name: AgentConfig(tool_names=["think_tool"]),
+            cls.agent_name: AgentConfig(tool_names=["think"]),
             cls.sub_agent_name: AgentConfig(
                 tool_names=[
-                    "think_tool",
-                    "tavily_search_tool_3_retries",
-                    "duckduckgo_search_tool_3_retries",
+                    "think",
+                    "tavily_search_3_retries",
+                    "duckduckgo_search_3_retries",
                 ]
             ),
         }
@@ -143,7 +144,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
         agent = Agent(
             model=config.model,
             instructions=format_as_xml(_instruction),
-            tools=config.tools + ctx.deps.extra_tools,
+            tools=unique(config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
             retries=3,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             name=cls.sub_agent_name,

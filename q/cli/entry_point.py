@@ -264,7 +264,7 @@ def print_config():
     """print all config key-value pairs stored in centralized config file"""
     console.print(str(centralized_config.file_path), extra_param=ExtraParam(panel_param_by_content("Config file")))
 
-    key_values = "\n".join([f"{key} = {value}" for key, value in centralized_config.config.items()])
+    key_values = "\n".join([f"- {key} = {value}" for key, value in centralized_config.config.items()])
     console.print(key_values, extra_param=ExtraParam(panel_param_by_content("Content")))
 
 

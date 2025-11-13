@@ -3,7 +3,7 @@ from q.workflow.agent.config import AgentConfig
 
 
 def test_specifying_tools():
-    config = AgentConfig(tool_names=["think_tool", "tavily_search_tool_3_retries", "duckduckgo_search_tool_3_retries"])
+    config = AgentConfig(tool_names=["think", "tavily_search_3_retries", "duckduckgo_search_3_retries"])
     assert isinstance(config.tools, list)
     assert len(config.tools) == 3
 

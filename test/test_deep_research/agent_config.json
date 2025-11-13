@@ -15,23 +15,23 @@
             "provider": "open_router",
             "model_name": "google/gemini-2.0-flash-001",
             "tool_names": [
-                "think_tool"
+                "think"
             ]
         },
         "researcher": {
             "provider": "open_router",
             "model_name": "google/gemini-2.0-flash-001",
             "tool_names": [
-                "think_tool",
-                "tavily_search_tool_3_retries",
-                "duckduckgo_search_tool_3_retries"
+                "think",
+                "tavily_search_3_retries",
+                "duckduckgo_search_3_retries"
             ]
         },
         "reviewer": {
             "provider": "open_router",
             "model_name": "google/gemini-2.0-flash-001",
             "tool_names": [
-                "think_tool"
+                "think"
             ]
         }
     }

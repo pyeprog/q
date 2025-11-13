@@ -12,6 +12,7 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction, PromptExample
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
+from q.workflow.util.misc import unique
 from q.workflow.util.node import ConfigurableNode, NodeToHalt
 from q.workflow.util.typing import AgentConfigMap
 
@@ -49,7 +50,7 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             model=config.model,
             system_prompt=self.sys_prompt,
             output_type=UserConfirming | ContinueRevising | UserConfirmed,
-            tools=config.tools + ctx.deps.extra_tools,
+            tools=unique(config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
             name=self.agent_name,
         )
 
