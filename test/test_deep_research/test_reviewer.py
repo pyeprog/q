@@ -3,6 +3,7 @@ from pathlib import Path
 from pydantic_graph.graph import Graph
 import pytest
 
+from q.workflow.agent.internal_tool import InternalToolMap
 from q.workflow.agent.util import model_response
 from q.workflow.repository.deep_research.reviewer import ContinueReviewing, DeepenResearch, Review
 from q.workflow.repository.deep_research.state import DeepResearchState
@@ -25,8 +26,6 @@ Unreal Engine 6 in the coming years.
 *   **EDENSPARK:** Gaijin Entertainment announced a new open-source game engine, EDENSPARK.
 """
 
-    os.chdir(Path(__file__).parent)
-
     state = DeepResearchState(
         user_requirement=[model_response(["research on latest popular game engine for indie game"])],
         research_plan=[model_response(["search for 3 popular game engines, then do a quick summary"])],
@@ -34,17 +33,16 @@ Unreal Engine 6 in the coming years.
     )
 
     node = Review("which one has released new version in 2025?")
+    deps = BaseDeps(working_dir=Path(__file__).parent, tool_map=InternalToolMap)
 
-    async with graph.iter(start_node=node, state=state, deps=BaseDeps()) as run:
+    async with graph.iter(start_node=node, state=state, deps=deps) as run:
         node = await run.next()
         assert isinstance(node, Review)
         node.user_input = "evaluate the research result, deepen the research if possible"
         assert isinstance(node.next_start, ContinueReviewing)
 
-    async with graph.iter(start_node=node, state=state, deps=BaseDeps()) as run:
+    async with graph.iter(start_node=node, state=state, deps=deps) as run:
         node = await run.next()
         assert isinstance(node, Review)
         assert isinstance(node.next_start, DeepenResearch)
         assert node.next_start.where_to_start in ["research_planning", "research_conducting"]
-
-    # TODO: check whole new deep research process

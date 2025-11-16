@@ -24,8 +24,9 @@ class WorkflowConfig(BaseModel):
     def get_agent_config(self, agent_name: str) -> AgentConfig:
         return self.agent_config_map[agent_name]
 
-    def tools_names(self) -> set[str]:
-        return set(chain.from_iterable([config.tool_names for config in self.agent_config_map.values()]))
+    @property
+    def tool_name_set(self) -> set[str]:
+        return set.union(*[config.tool_names for config in self.agent_config_map.values()])
 
 
 def load_config(dir_: str | Path = ".") -> WorkflowConfig:

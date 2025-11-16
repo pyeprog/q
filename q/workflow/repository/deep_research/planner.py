@@ -15,7 +15,6 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
-from q.workflow.util.misc import unique
 from q.workflow.util.node import Anthropomorphic, ConfigurableNode
 from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
@@ -33,13 +32,13 @@ class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthropomorp
                 extra_param=ExtraParam(markdownify=False),
             )
 
-        config = load_config().get_agent_config(self.agent_name)
+        config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
 
         agent = Agent(
             model=config.model,
             system_prompt=self.sys_prompt,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
-            tools=unique(config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
+            tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             name=self.agent_name,
         )
 

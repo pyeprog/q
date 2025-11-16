@@ -20,25 +20,25 @@ def test_say_helper():
         parser.parse_args(["say", "-h"])
 
 
+def test_say_with_no_extra_tools():
+    namespace = parser.parse_args(["say", "user prompt here"])
+    assert namespace.command == "say"
+    assert namespace.prompt == "user prompt here"
+    assert namespace.extra_tools == []
+
+
 def test_say_with_extra_tools():
     namespace = parser.parse_args(["say", "user prompt here", "-t", "think1, think2"])
     assert namespace.command == "say"
     assert namespace.prompt == "user prompt here"
-    assert namespace.extra_tools == "think1, think2"
+    assert namespace.extra_tools == ["think1", "think2"]
 
 
 def test_s_with_extra_tools_in_different_order():
     namespace = parser.parse_args(["s", "-t", "employees", "who is employee with id 3241?"])
     assert namespace.command == "s"
     assert namespace.prompt == "who is employee with id 3241?"
-    assert namespace.extra_tools == "employees"
-
-
-def test_s_without_tool():
-    namespace = parser.parse_args(["say", "user prompt here"])
-    assert namespace.command == "say"
-    assert namespace.prompt == "user prompt here"
-    assert namespace.extra_tools is None
+    assert namespace.extra_tools == ["employees"]
 
 
 def test_create_helper():
@@ -52,6 +52,7 @@ def test_create_for_no_directory_specified():
     assert namespace.directory == Path.cwd()
     assert namespace.workflow == "default"
     assert namespace.refer_dir is None
+    assert namespace.extra_tools == []
 
 
 def test_create_for_directory_specified():
@@ -60,6 +61,7 @@ def test_create_for_directory_specified():
     assert namespace.directory == Path("/tmp/abc")
     assert namespace.workflow == "default"
     assert namespace.refer_dir is None
+    assert namespace.extra_tools == []
 
 
 def test_create_and_specify_workflow():
@@ -68,12 +70,23 @@ def test_create_and_specify_workflow():
     assert namespace.directory == Path("/tmp/abc")
     assert namespace.workflow == "research"
     assert namespace.refer_dir is None
+    assert namespace.extra_tools == []
 
 
 def test_create_and_specify_refer_dir():
     namespace = parser.parse_args(["create", "--refer_dir", "/tmp/cde"])
     assert namespace.command == "create"
     assert namespace.refer_dir == Path("/tmp/cde")
+    assert namespace.extra_tools == []
+
+
+def test_create_with_tools():
+    namespace = parser.parse_args(["create", "-t", "t1,t2,  t3"])
+    assert namespace.command == "create"
+    assert namespace.directory == Path.cwd()
+    assert namespace.workflow == "default"
+    assert namespace.refer_dir is None
+    assert namespace.extra_tools == ["t1", "t2", "t3"]
 
 
 def test_info_without_directory():
@@ -113,9 +126,6 @@ def test_config_without_param():
     assert namespace.command == "config"
     assert namespace.key_value_strs is None
     assert namespace.unset_keys is None
-    assert namespace.edit is False
-    assert namespace.which is False
-    assert namespace.show is False
 
 
 def test_config_with_set():
@@ -123,9 +133,6 @@ def test_config_with_set():
     assert namespace.command == "config"
     assert namespace.key_value_strs == ["a=b", "c=d"]
     assert namespace.unset_keys is None
-    assert namespace.edit is False
-    assert namespace.which is False
-    assert namespace.show is False
 
 
 def test_config_with_unset():
@@ -133,36 +140,34 @@ def test_config_with_unset():
     assert namespace.command == "config"
     assert namespace.key_value_strs is None
     assert namespace.unset_keys == ["a", "b"]
-    assert namespace.edit is False
-    assert namespace.which is False
-    assert namespace.show is False
 
 
-def test_config_with_edit_flag():
-    namespace = parser.parse_args(["config", "--edit"])
+def test_config():
+    namespace = parser.parse_args(["config"])
     assert namespace.command == "config"
     assert namespace.key_value_strs is None
     assert namespace.unset_keys is None
-    assert namespace.edit is True
-    assert namespace.which is False
-    assert namespace.show is False
 
 
-def test_config_with_which_flag():
-    namespace = parser.parse_args(["config", "--which"])
-    assert namespace.command == "config"
-    assert namespace.key_value_strs is None
-    assert namespace.unset_keys is None
-    assert namespace.edit is False
-    assert namespace.which is True
-    assert namespace.show is False
+def test_workflow_add():
+    namespace = parser.parse_args(["w", "--add", "/tmp/lib1", "/tmp/lib2"])
+    assert namespace.command == "w"
+    assert namespace.workflow_mods_to_add == [Path("/tmp/lib1"), Path("/tmp/lib2")]
 
 
-def test_config_with_show_flag():
-    namespace = parser.parse_args(["config", "--show"])
-    assert namespace.command == "config"
-    assert namespace.key_value_strs is None
-    assert namespace.unset_keys is None
-    assert namespace.edit is False
-    assert namespace.which is False
-    assert namespace.show is True
+def test_workflow_rm():
+    namespace = parser.parse_args(["workflow", "--rm", "lib1", "lib2"])
+    assert namespace.command == "workflow"
+    assert namespace.workflow_mods_to_rm == ["lib1", "lib2"]
+
+
+def test_tool_add():
+    namespace = parser.parse_args(["t", "--add", "/tmp/lib1", "/tmp/lib2"])
+    assert namespace.command == "t"
+    assert namespace.tool_mods_to_add == ["/tmp/lib1", "/tmp/lib2"]
+
+
+def test_tool_rm():
+    namespace = parser.parse_args(["tool", "--rm", "lib1", "lib2"])
+    assert namespace.command == "tool"
+    assert namespace.tool_mods_to_rm == ["lib1", "lib2"]

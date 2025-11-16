@@ -17,9 +17,10 @@ def parser():
     say_parser.add_argument(
         "--extra_tools",
         "-t",
-        type=str,
+        type=lambda s: [name for part in s.split(",") if (name := part.strip())],
         nargs="?",
         dest="extra_tools",
+        default="",
         help="function tool names separated by comma, check out names using tool subcommand",
         metavar="tool-names",
     )
@@ -63,6 +64,16 @@ def parser():
         dest="refer_dir",
         help="specify which qiery directory to refer to",
         metavar="directory",
+    )
+    create_parser.add_argument(
+        "--extra_tools",
+        "-t",
+        type=lambda s: [name for part in s.split(",") if (name := part.strip())],
+        nargs="?",
+        dest="extra_tools",
+        default="",
+        help="function tool names separated by comma, check out names using tool subcommand",
+        metavar="tool-names",
     )
 
     info_parser = subcommand.add_parser("info", help="list meta info about the query")
@@ -142,7 +153,7 @@ def parser():
         "--add",
         action="extend",
         nargs="+",
-        type=Path,
+        type=str,
         dest="tool_mods_to_add",
         help="paths of tool module to add, a single module might have multiple tools",
         metavar="python_mod_path",

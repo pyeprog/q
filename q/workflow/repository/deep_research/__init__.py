@@ -22,7 +22,7 @@ class DeepResearchWorkflow(BaseWorkflow):
         )
 
     def persistence(self) -> FileStatePersistence:
-        persistence = FileStatePersistence(Path(PERSISTENCE_FILENAME))
+        persistence = FileStatePersistence(self.deps.working_dir / PERSISTENCE_FILENAME)
         persistence.set_graph_types(self.graph())
         return persistence
 

@@ -19,7 +19,6 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
-from q.workflow.util.misc import unique
 from q.workflow.util.node import Anthropomorphic, ConfigurableNode
 from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
@@ -44,12 +43,12 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
                 extra_param=ExtraParam(markdownify=False),
             )
 
-        config = load_config().get_agent_config(self.agent_name)
+        config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
         agent = Agent(
             model=config.model,
             deps_type=BaseDeps,
             system_prompt=self.sys_prompt,
-            tools=unique(config.tools + [agent_research_tool] + ctx.deps.extra_tools, key=lambda tool: tool.name),
+            tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names) + [agent_research_tool],
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             name=self.agent_name,
         )
@@ -71,13 +70,13 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
         return {
-            cls.agent_name: AgentConfig(tool_names=["think"]),
+            cls.agent_name: AgentConfig(tool_names={"think"}),
             cls.sub_agent_name: AgentConfig(
-                tool_names=[
+                tool_names={
                     "think",
                     "tavily_search_3_retries",
                     "duckduckgo_search_3_retries",
-                ]
+                }
             ),
         }
 
@@ -140,11 +139,11 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
                 extra_param=ExtraParam(markdownify=False),
             )
 
-        config = load_config().get_agent_config(cls.sub_agent_name)
+        config = load_config(ctx.deps.working_dir).get_agent_config(cls.sub_agent_name)
         agent = Agent(
             model=config.model,
             instructions=format_as_xml(_instruction),
-            tools=unique(config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
+            tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             retries=3,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             name=cls.sub_agent_name,

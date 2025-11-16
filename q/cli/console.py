@@ -1,11 +1,15 @@
+from contextlib import suppress
 import hashlib
-import re
+import json
 import sys
+import tomllib
 from rich.color import ANSI_COLOR_NAMES
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.style import Style
+import xml.etree.ElementTree as ET
+
 
 from q.workflow.util.output import ExtraParam, PanelParam, Printable, Printer
 
@@ -28,17 +32,36 @@ class CliConsole(Printer):
         self._console = Console()
         self._plain = plain
 
-    def is_markdown(self, s: str) -> bool:
-        if re.findall(r"<\/(\S+)>", s):
-            return False  # xml
+    def is_json(self, s: str) -> bool:
+        with suppress(Exception):
+            json.loads(s)
+            return True
+        return False
 
-        return True
+    def is_toml(self, s: str) -> bool:
+        with suppress(Exception):
+            tomllib.loads(s)
+            return True
+        return False
+
+    def is_xml(self, s: str) -> bool:
+        with suppress(Exception):
+            ET.fromstring(s)
+            return True
+        return False
+
+    def is_markdown_or_yaml(self, s: str) -> bool:
+        # Since almost no correct YAML processors exist(https://matrix.yaml.info/)
+        # and we can't tell the difference between yaml and plain text using yaml lib in python
+        # and yaml is not that difficult to read for human, thus we treat markdown and yaml as a whole
+        # Moreover, plain text is a special kind of markdown, so markdown refers to markdown and plain text
+        return not (self.is_json(s) or self.is_toml(s) or self.is_xml(s))
 
     def markdownify(self, s: str):
         string = s.strip()
         if string.startswith("```markdown") and string.endswith("```"):
-            # sometimes ai agent will output content wrapped in markdown block, and sometimes not
-            # we unwrap the markdown content from the block in order to print with markdown styling
+            # sometimes ai agent will output content wrapped in redundant markdown block
+            # we strip that off to make rich console work
             string = string.removeprefix("```markdown").removesuffix("```")
 
         return Markdown(string)
@@ -53,7 +76,7 @@ class CliConsole(Printer):
     ) -> None:
         for content in objects:
             if not self._plain and sys.stdout.isatty() and isinstance(content, str):
-                if extra_param and self.is_markdown(content) and extra_param.markdownify:
+                if extra_param and self.is_markdown_or_yaml(content) and extra_param.markdownify:
                     content = self.markdownify(content)
 
                 if extra_param and extra_param.panel_param:

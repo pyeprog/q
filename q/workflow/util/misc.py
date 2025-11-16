@@ -1,4 +1,4 @@
-from typing import Any, Callable, Sequence
+from typing import Callable, Sequence
 
 
 def unique[T, P](seq: Sequence[T], keep_ordinal: bool = False, key: Callable[[T], P] | None = None) -> list[T]:
@@ -20,12 +20,13 @@ def unique[T, P](seq: Sequence[T], keep_ordinal: bool = False, key: Callable[[T]
         >>> unique([1, 2, 2, 3, 1], keep_ordinal=True)
         [1, 2, 3]  # preserves order of first occurrence
     """
-    
+
     if not keep_ordinal and key is None:
         # short cut
         return list(set(seq))
-    
+
     seen: set[T | P] = set()
+
     def key_func(item: T) -> T | P:
         if key is None:
             return item
@@ -38,5 +39,5 @@ def unique[T, P](seq: Sequence[T], keep_ordinal: bool = False, key: Callable[[T]
         if item_key not in seen:
             seen.add(item_key)
             result.append(item)
-            
+
     return result

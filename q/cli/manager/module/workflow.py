@@ -4,7 +4,7 @@ import inspect
 from types import ModuleType
 
 from q.cli.constant import CONFIG_HOME
-from q.cli.manager.base_manager import BaseManager, Module
+from q.cli.manager.module.base_module_manager import BaseModuleManager, Module
 from q.workflow.base_workflow import BaseWorkflow
 from q.workflow.repository import WORKFLOW_MAP
 
@@ -14,7 +14,7 @@ class WorkflowModule(Module):
     workflow_classes: list[type[BaseWorkflow]]
 
 
-class WorkflowManager(BaseManager):
+class WorkflowManager(BaseModuleManager):
     @property
     def modules(self) -> list[WorkflowModule]:
         modules: list[WorkflowModule] = []

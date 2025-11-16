@@ -8,6 +8,7 @@ from pydantic_ai.messages import (
 from pydantic_ai.usage import RunUsage
 from pydantic_graph.graph import Graph
 import pytest
+from q.workflow.agent.internal_tool import InternalToolMap
 from q.workflow.agent.util import open_router_model
 from q.workflow.repository.deep_research.reviewer import Review
 from q.workflow.repository.deep_research.state import DeepResearchState
@@ -17,9 +18,9 @@ from q.workflow.util.deps import BaseDeps
 
 @pytest.mark.asyncio
 async def test_agent_research():
-    os.chdir(Path(__file__).parent)
-
-    mock_ctx = RunContext(deps=BaseDeps(), model=open_router_model("google/gemini-2.0-flash-001"), usage=RunUsage())
+    mock_ctx = RunContext(deps=BaseDeps(working_dir=Path(__file__).parent, tool_map=InternalToolMap),
+                          model=open_router_model("google/gemini-2.0-flash-001"),
+                          usage=RunUsage())
     result = await Supervise.agent_research(mock_ctx, "list the top 3 most popular framework for web app frontend")
     assert isinstance(result, str)
     assert result
@@ -28,8 +29,6 @@ async def test_agent_research():
 
 @pytest.mark.asyncio
 async def test_superviser():
-    os.chdir(Path(__file__).parent)
-
     graph = Graph(nodes=(Supervise, Review), state_type=DeepResearchState)
     user_requirement = """
     I need to create a product introduction page, details as follows:
@@ -87,7 +86,8 @@ async def test_superviser():
         user_requirement=[ModelRequest(parts=[UserPromptPart(content=user_requirement)])],
     )
     node = Supervise(research_plan)
+    deps = BaseDeps(working_dir=Path(__file__).parent, tool_map=InternalToolMap)
 
-    async with graph.iter(node, state=state, deps=BaseDeps()) as run:
+    async with graph.iter(node, state=state, deps=deps) as run:
         node = await run.next()
         assert isinstance(node, Review)

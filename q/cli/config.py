@@ -11,6 +11,7 @@ class CentralizedConfig:
     CONFIG_TEMPLATE: dict = {
         "OPENROUTER_API_KEY": PLACEHOLDER,
         "TAVILY_API_KEY": PLACEHOLDER,
+        "editor": "vim",
     }
 
     def __init__(self, file_path: str | Path) -> None:
@@ -68,6 +69,10 @@ class CentralizedConfig:
         env_lines: list[str] = []
         for key, value in self.config.items():
             if value == self.PLACEHOLDER:
+                continue
+            if not key.isupper():
+                # keys are all upper case, config other than keys are in lower case
+                # no key config should not be put into env file
                 continue
 
             env_lines.append(f"{key}={value}")

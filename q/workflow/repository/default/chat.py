@@ -14,7 +14,6 @@ from pydantic_graph.nodes import BaseNode, GraphRunContext
 
 from dataclasses import dataclass
 
-from q.workflow.util.misc import unique
 from q.workflow.util.node import Anthropomorphic, ConfigurableNode
 from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
@@ -26,11 +25,11 @@ class Chat(BaseNode[DefaultState, BaseDeps], ConfigurableNode, Anthropomorphic):
     agent_name: ClassVar[str] = "chatter"
 
     async def run(self, ctx: GraphRunContext[DefaultState, BaseDeps]) -> Halt:
-        agent_config = load_config().get_agent_config(self.agent_name)
+        agent_config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
 
         agent = Agent(
             model=agent_config.model,
-            tools=unique(agent_config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
+            tools=agent_config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             name=self.agent_name,
         )
 

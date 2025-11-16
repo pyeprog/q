@@ -36,10 +36,10 @@ def main():
                 print("prompt query should not be empty", file=sys.stderr)
                 exit(1)
 
-            query(user_input=prompt, extra_tools=args.extra_tools, plain=args.plain)
+            query(user_input=prompt, extra_tool_names=args.extra_tools, plain=args.plain)
 
         case "create" | "c":
-            create_query(directory=args.directory, workflow=args.workflow, refer_dir=args.refer_dir)
+            create_query(directory=args.directory, workflow=args.workflow, refer_dir=args.refer_dir, extra_tool_names=args.extra_tools)
 
         case "info":
             info(directory=args.directory)

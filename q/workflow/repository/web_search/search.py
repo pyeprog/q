@@ -10,30 +10,30 @@ from q.workflow.agent.util import agent_event_stream_handler
 from q.workflow.repository.web_search.state import State
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
-from q.workflow.util.misc import unique
 from q.workflow.util.node import Anthropomorphic, ConfigurableNode, NodeToHalt
 from q.workflow.util.output import ExtraParam
 from q.workflow.util.typing import AgentConfigMap
 
+
 @dataclass
 class Halt(BaseNode[State, BaseDeps], NodeToHalt):
-    async def run(self, ctx: GraphRunContext[State, BaseDeps]) -> 'Halt':
+    async def run(self, ctx: GraphRunContext[State, BaseDeps]) -> "Halt":
         return Halt()
 
 
 @dataclass
 class Searcher(BaseNode[State, BaseDeps], ConfigurableNode, Anthropomorphic):
     user_input: str
-    agent_name: ClassVar[str] = 'searcher'
+    agent_name: ClassVar[str] = "searcher"
 
     async def run(self, ctx: GraphRunContext[State, BaseDeps]) -> Halt:
-        agent_config = load_config().get_agent_config(self.agent_name)
+        agent_config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
 
         agent = Agent(
             model=agent_config.model,
-            tools=unique(agent_config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
+            tools=agent_config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             system_prompt=self.instruction,
-            name=self.agent_name
+            name=self.agent_name,
         )
 
         def tool_result_event_handler(e: FunctionToolResultEvent):
@@ -41,22 +41,22 @@ class Searcher(BaseNode[State, BaseDeps], ConfigurableNode, Anthropomorphic):
                 f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
                 extra_param=ExtraParam(markdownify=False),
             )
-            
+
         response = await agent.run(
             self.user_input,
             message_history=ctx.state.message_history,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
         )
-        
+
         ctx.state.message_history += response.new_messages()
         ctx.deps.console.print(response.output, extra_param=ctx.deps.gen_agent_extra_param(self.agent_name))
-        
+
         return Halt()
-    
+
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
-        return {cls.agent_name: AgentConfig(tool_names=["duckduckgo_search_extensively"])}
-        
+        return {cls.agent_name: AgentConfig(tool_names={"duckduckgo_search_extensively", "tavily_search_3_retries"})}
+
     @property
     def instruction(self) -> str:
         prompt = Instruction(
@@ -64,7 +64,7 @@ class Searcher(BaseNode[State, BaseDeps], ConfigurableNode, Anthropomorphic):
             task="Your primary task is to execute web searches based on user queries to gather specific information. This involves interpreting the user's intent, formulating appropriate search terms, conducting the search, and extracting factual data, definitions, statistics, news, or any other requested online content. You must provide a concise and accurate synthesis of the found information.",
             context=[
                 "the internet contains a wide spectrum of information quality, from highly authoritative to speculative or even misleading",
-                ""
+                "",
             ],
             guidelines=[
                 "Cite Sources: provide the URLs of the webpages from which the information was retrieved",
@@ -76,8 +76,8 @@ class Searcher(BaseNode[State, BaseDeps], ConfigurableNode, Anthropomorphic):
             taboos=[
                 "Inventing Information: Never fabricate or guess information when a search yields no results. State explicitly if the information cannot be found.",
                 "Going Off-Topic: Do not include extraneous or unrelated information that was not explicitly requested by the user.",
-                "Performing Actions Beyond Search: Your role is limited to searching and retrieving information; do not attempt to perform actions like making reservations, sending emails, or interacting with websites in a transactional manner."
-            ]
+                "Performing Actions Beyond Search: Your role is limited to searching and retrieving information; do not attempt to perform actions like making reservations, sending emails, or interacting with websites in a transactional manner.",
+            ],
         )
-        
+
         return format_as_xml(prompt)

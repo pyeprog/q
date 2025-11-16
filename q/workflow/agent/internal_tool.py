@@ -5,6 +5,8 @@ from ddgs import DDGS
 from typing import Callable, Literal
 from pydantic.main import BaseModel
 
+from q.workflow.agent.typing import ToolMap
+
 
 class Thought(BaseModel):
     description: str
@@ -65,16 +67,16 @@ def create_duckduckgo_search_tool(max_results: int = 5, max_retries: int | None 
     )
 
 
-class ToolMap:
-    def __init__(self):
-        self.dict = {
-            "think": think_tool,
-            "tavily_search": create_tavily_search_tool(),
-            "tavily_search_3_retries": create_tavily_search_tool(max_retries=3),
-            "duckduckgo_search": create_duckduckgo_search_tool(),
-            "duckduckgo_search_3_retries": create_duckduckgo_search_tool(max_retries=3),
-            "duckduckgo_search_extensively": create_duckduckgo_search_tool(max_results=30, max_retries=3),
-        }
+class InternalToolMap(ToolMap):
+    dict = {
+        "think": think_tool,
+        "tavily_search": create_tavily_search_tool(),
+        "tavily_search_3_retries": create_tavily_search_tool(max_retries=3),
+        "duckduckgo_search": create_duckduckgo_search_tool(),
+        "duckduckgo_search_3_retries": create_duckduckgo_search_tool(max_retries=3),
+        "duckduckgo_search_extensively": create_duckduckgo_search_tool(max_results=10, max_retries=3),
+    }
 
-    def get[T](self, key: str, default: T | None = None) -> Callable | T:
-        return self.dict.get(key, default)
+    @classmethod
+    def get[T](cls, key: str, default: T | None = None, /) -> Callable | T:
+        return cls.dict.get(key, default)

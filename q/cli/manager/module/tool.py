@@ -5,8 +5,8 @@ from types import ModuleType
 from typing import Callable
 
 from q.cli.constant import CONFIG_HOME
-from q.cli.manager.base_manager import BaseManager, Module
-from q.workflow.agent.tool import ToolMap
+from q.cli.manager.module.base_module_manager import BaseModuleManager, Module
+from q.workflow.agent.internal_tool import InternalToolMap
 
 
 @dataclass
@@ -14,7 +14,7 @@ class ToolModule(Module):
     tool_functions: list[Callable]
 
 
-class ToolManager(BaseManager):
+class ToolManager(BaseModuleManager):
     @property
     def modules(self) -> list[ToolModule]:
         tool_modules: list[ToolModule] = []
@@ -49,7 +49,7 @@ class ToolManager(BaseManager):
 
     @property
     def tool_map(self) -> dict[str, Callable]:
-        _map: dict[str, Callable] = deepcopy(ToolMap().dict)
+        _map: dict[str, Callable] = deepcopy(InternalToolMap.dict)
 
         for tool_module in self.modules:
             for tool_function in tool_module.tool_functions:

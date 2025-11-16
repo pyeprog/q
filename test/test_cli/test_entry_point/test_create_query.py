@@ -20,7 +20,7 @@ def nonexisting_dir() -> Generator[Path, Any, Any]:
 def test_create(nonexisting_dir: Path):
     path = nonexisting_dir
 
-    create_query(directory=path, workflow="research")
+    create_query(directory=path, workflow="research", extra_tool_names=[])
 
     assert path.exists()
     assert path.is_dir()

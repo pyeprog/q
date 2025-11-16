@@ -12,7 +12,6 @@ from q.workflow.repository.deep_research.state import DeepResearchState
 from q.workflow.agent.prompt import Instruction, PromptExample
 from q.workflow.util.config import load_config
 from q.workflow.util.deps import BaseDeps
-from q.workflow.util.misc import unique
 from q.workflow.util.node import ConfigurableNode, NodeToHalt
 from q.workflow.util.typing import AgentConfigMap
 
@@ -45,12 +44,12 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
     agent_name: ClassVar[str] = "reviser"
 
     async def run(self, ctx: GraphRunContext[DeepResearchState, BaseDeps]) -> UserRevise | Plan:
-        config = load_config().get_agent_config(self.agent_name)
+        config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
         agent = Agent(
             model=config.model,
             system_prompt=self.sys_prompt,
             output_type=UserConfirming | ContinueRevising | UserConfirmed,
-            tools=unique(config.tools + ctx.deps.extra_tools, key=lambda tool: tool.name),
+            tools=config.tools(ctx.deps.extra_tool_names, extra_tool_names=ctx.deps.extra_tool_names),
             name=self.agent_name,
         )
 
@@ -131,7 +130,7 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
 
     User: No additions
 
-    System(you): 
+    System(you):
     <UserReqirement>
         <content>
             Create a product introduction page, specifically:
@@ -152,7 +151,7 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
     System(you): Are there any other additions? Perhaps you could...
 
     System(you): Create a product introduction page, (organized and structured expression of user's goals and expectations... specific content omitted)
-    
+
     Are there any other additions? Perhaps you could...
 
     User: Not quite right, I think this goal is too big, our team is quite small, unlikely to complete it.
@@ -173,7 +172,7 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
     4. **Expected effect:** Do you want a light laugh or a joke that makes people think?
     5. **Any topics to avoid?** (e.g., politics, religion, sensitive content, etc.)
     Please tell me your main concerns so I can better serve you.
-        
+
     User: Edgy programmer jokes. No taboos. For my programmer colleagues. Hope to make them smile during busy daily work.
 
     System(you): Okay, your requirement is:
@@ -189,7 +188,7 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
 
     User: confirm it, please go on
 
-    System(you): 
+    System(you):
     <UserRequirement>
         <content>
         Tell a joke, specific requirements:

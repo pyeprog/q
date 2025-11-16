@@ -5,6 +5,7 @@ from pydantic_graph.graph import Graph
 from pydantic_graph.persistence.in_mem import SimpleStatePersistence
 import pytest
 
+from q.workflow.agent.internal_tool import InternalToolMap
 from q.workflow.repository.deep_research.planner import Plan
 from q.workflow.repository.deep_research.reviewer import Review
 from q.workflow.repository.deep_research.state import DeepResearchState
@@ -23,11 +24,11 @@ async def test_planner():
     - Branding: No existing brand guidelines (assuming colors and fonts can be temporarily determined)
     - Delivery time: 2 weeks
 """
-    os.chdir(Path(__file__).parent)
     node = Plan(requirement_text)
     persistence = SimpleStatePersistence()
     state = DeepResearchState()
-    async with graph.iter(node, state=state, persistence=persistence, deps=BaseDeps()) as run:
+    deps = BaseDeps(working_dir=Path(__file__).parent, tool_map=InternalToolMap)
+    async with graph.iter(node, state=state, persistence=persistence, deps=deps) as run:
         node = await run.next()
         assert isinstance(node, Supervise)
         assert state.research_plan

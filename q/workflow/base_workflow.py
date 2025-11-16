@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import asyncio
 from dataclasses import dataclass
+from pathlib import Path
 
 from pydantic_graph.graph import Graph
 from pydantic_graph.nodes import BaseNode, End
@@ -15,8 +16,8 @@ class State: ...
 
 
 class BaseWorkflow(ABC):
-    def __init__(self, deps: BaseDeps | None = None) -> None:
-        self.deps = deps or BaseDeps()
+    def __init__(self, deps: BaseDeps) -> None:
+        self.deps = deps
 
     @classmethod
     @abstractmethod

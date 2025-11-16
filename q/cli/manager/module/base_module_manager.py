@@ -15,7 +15,7 @@ class Module:
     mod_path: Path  # either a python file path or a module directory path
 
 
-class BaseManager(ABC):
+class BaseModuleManager(ABC):
     def __init__(self, dir_path: str | Path) -> None:
         self.dir_path = Path(dir_path)
         if not self.dir_path.exists():

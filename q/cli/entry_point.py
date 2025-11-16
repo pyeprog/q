@@ -1,10 +1,11 @@
 import asyncio
+from contextlib import suppress
 from dataclasses import fields
 from itertools import chain
+import json
 from pathlib import Path
 import subprocess
 import sys
-from typing import Callable
 
 from pydantic_ai.messages import (
     BaseToolCallPart,
@@ -19,68 +20,64 @@ from pydantic_graph.persistence.file import FileStatePersistence
 from pydantic_graph.persistence import Snapshot
 from rich.table import Table
 import toml
+from q.cli.manager import GlobalToolMap
 from q.workflow.repository import WORKFLOW_MAP
 from q.workflow.persistence import PERSISTENCE_FILENAME
 from q.workflow.util.config import LocalConfigLoader, WorkflowConfig
-from q.workflow.agent.tool import ToolMap
+from q.workflow.agent.internal_tool import InternalToolMap
 from q.workflow.util.config import load_config, save_config
 from q.workflow.util.deps import BaseDeps
 from q.cli.config import centralized_config
-from q.cli.manager.workflow import workflow_manager
-from q.cli.manager.tool import tool_manager
+from q.cli.manager.module.workflow import workflow_manager
+from q.cli.manager.module.tool import tool_manager
 from q.workflow.util.node import ConfigurableNode
 from q.cli.console import CliConsole, panel_param_by_content, console
 from q.workflow.util.output import ExtraParam
+from q.cli.manager.mcp import SSEMCP, StdioMCP, StreamableHttpMCP, mcp_manager
 
 
-def query(user_input: str, extra_tools: str | None = None, plain: bool = False):
+def query(user_input: str, extra_tool_names: list[str], plain: bool = False, working_dir: str | Path = "."):
     """start querying with AI agent
 
     Args:
         user_input (str): user's prompt
-        extra_tool (list[str]): extra function tools
-        config_path (str): path to config file
+        extra_tool_names (list[str]): extra function tool names
         plain (bool): whether to print plain text without rich formatting
+        working_dir (str | Path): working directory containing config and history
     """
     assert user_input, "user_input should not be empty"
 
-    workflow_config = load_config()
+    workflow_config = load_config(working_dir)
+    workflow_name = workflow_config.workflow_name
 
-    workflow_cls = workflow_manager.workflow_map.get(workflow_config.workflow_name, None)
+    workflow_cls = workflow_manager.workflow_map.get(workflow_name, None)
 
     if not workflow_cls:
         print(
-            f"Workflow {workflow_config.workflow_name} not found, use workflow command to check them out",
+            f"Workflow {workflow_name} not found, use workflow command to check them out",
             file=sys.stderr,
         )
         exit(1)
 
-    tool_map = tool_manager.tool_map
-    tools: list[Callable] = []
-    existed_tool_names: set[str] = workflow_config.tools_names()
-    for tool_name in {name.strip() for name in (extra_tools or "").split(",")}:
-        if tool_name in existed_tool_names:  # once tool existed already in agent config, skip it
-            continue
-
-        if tool := tool_map.get(tool_name):
-            tools.append(tool)
-
     workflow = workflow_cls(
-        BaseDeps(
-            extra_tools=tools,
+        deps=BaseDeps(
+            tool_map=GlobalToolMap,
+            extra_tool_names=extra_tool_names,
             console=CliConsole(plain),
             gen_agent_extra_param=lambda title: ExtraParam(panel_param_by_content(title)),
-        )
+            working_dir=working_dir,
+        ),
     )
     workflow.entry(user_input)
 
 
-def create_query(directory: str | Path, workflow: str, refer_dir: str | Path | None = None):
+def create_query(directory: str | Path, workflow: str, extra_tool_names: list[str], refer_dir: str | Path | None = None):
     """create necessary config file for query in given directory
 
     Args:
         directory (str | Path): target directory
         workflow (str): workflow name, corresponding to keys in WORKFLOW_MAP
+        extra_tool_names (list[str]): extra function tool names
         refer_dir (str): referenced directory(other query directory), which is used when you want to refer its message history
     """
     # create directory if it's not existed
@@ -110,11 +107,18 @@ def create_query(directory: str | Path, workflow: str, refer_dir: str | Path | N
         print(f"Workflow {workflow} not found, use workflow command to check them out", file=sys.stderr)
         exit(1)
 
-    workflow_graph = workflow_cls(BaseDeps()).graph()
+    workflow_graph = workflow_cls.graph()
     workflow_config = WorkflowConfig(workflow_name=workflow)
     for node_def in workflow_graph.node_defs.values():
         if issubclass(node_def.node, ConfigurableNode):
-            workflow_config.agent_config_map.update(node_def.node.agent_config())
+            agent_config = node_def.node.agent_config()
+
+            # add extra tool names into agent config of each node
+            for config in agent_config.values():
+                config.tool_names.update(extra_tool_names)
+
+            # workflow_config collects agent_config or each nodes
+            workflow_config.agent_config_map.update(agent_config)
 
     save_config(config=workflow_config, dir_=path)
 
@@ -144,7 +148,8 @@ def create_query(directory: str | Path, workflow: str, refer_dir: str | Path | N
             toml.dump(translation_config, fp)
 
         try:
-            subprocess.run(["nvim", temporary_filename], check=True)
+            editor_cmd = centralized_config.config.get("EDITOR", "vim")
+            subprocess.run([editor_cmd, temporary_filename], check=True)
         except Exception as e:
             print(f"An unexpected error occurred while invoking editor: {e}", file=sys.stderr)
             exit(1)
@@ -333,7 +338,7 @@ def add_workflow_mod(workflow_mod_paths: list[str | Path]):
 
 def print_tools():
     """print all tools"""
-    table = Table()
+    table = Table(title="Function Tools")
     table.add_column("Tool", style="cyan")
     table.add_column("Module", style="magenta")
     table.add_column("Deletable", style="green", justify="right")
@@ -341,8 +346,26 @@ def print_tools():
         for tool in module.tool_functions:
             table.add_row(tool.__name__, module.mod_name, "True")
 
-    for name in ToolMap().dict.keys():
+    for name in InternalToolMap.dict.keys():
         table.add_row(name, "Internal", "False")
+
+    console.print(table)
+
+    table = Table(title="MCP Tools")
+    table.add_column("MCP Tool", style="cyan")
+    table.add_column("Type", style="magenta")
+    table.add_column("Deletable", style="green", justify="right")
+
+    for name, mcp in mcp_manager.mcp_map.items():
+        if isinstance(mcp, StreamableHttpMCP):
+            type_ = "Streamable Http"
+        elif isinstance(mcp, SSEMCP):
+            type_ = "SSE"
+        elif isinstance(mcp, StdioMCP):
+            type_ = "Stdio"
+        else:
+            type_ = "Unknown"
+        table.add_row(name, type_, "True")
 
     console.print(table)
 
@@ -354,12 +377,26 @@ def rm_tool_mod(tool_mod_names: list[str]):
         tool_mod_names (list[str]): list of module names
     """
     tool_manager.rm_modules(tool_mod_names)
+    mcp_manager.rm_all(tool_mod_names)
 
 
-def add_tool_mod(tool_mod_paths: list[str | Path]):
+def add_tool_mod(list_of_mod_path_or_json: list[str | Path]):
     """add tool modules by given paths(either python file path or python module directory path)
 
     Args:
         tool_mod_paths (list[str  |  Path]): module paths
     """
-    tool_manager.add_modules(tool_mod_paths)
+
+    def is_json(mod_path_or_json):
+        with suppress(Exception):
+            json.loads(mod_path_or_json)
+            return True
+
+        return False
+
+    for mod_path_or_json in list_of_mod_path_or_json:
+        if is_json(mod_path_or_json):
+            config_json = mod_path_or_json
+            mcp_manager.add_config_json(config_json)
+        else:
+            tool_manager.add_modules([mod_path_or_json])

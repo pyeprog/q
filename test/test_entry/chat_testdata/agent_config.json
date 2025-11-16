@@ -1,1 +1,0 @@
-{"workflow_name":"default","agent_config_map":{"chatter":{"provider":"open_router","model_name":"google/gemini-2.0-flash-001","tool_names":[]}}}
