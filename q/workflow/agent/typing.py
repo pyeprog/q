@@ -1,5 +1,9 @@
 from typing import Callable, Protocol
 
+from pydantic_ai import AbstractToolset, ToolsetFunc
+
 
 class ToolMap(Protocol):
-    def get[T](self, tool_name: str, default: T | None = None, /) -> Callable | T | None: ...
+    @classmethod
+    def get[T](cls, tool_name: str, default: T | None = None, /) -> Callable | AbstractToolset | ToolsetFunc | T | None:
+        ...

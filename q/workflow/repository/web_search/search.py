@@ -27,18 +27,19 @@ class Searcher(BaseNode[State, BaseDeps], ConfigurableNode, Anthropomorphic):
     agent_name: ClassVar[str] = "searcher"
 
     async def run(self, ctx: GraphRunContext[State, BaseDeps]) -> Halt:
-        agent_config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
+        config = load_config(ctx.deps.working_dir).get_agent_config(self.agent_name)
 
         agent = Agent(
-            model=agent_config.model,
-            tools=agent_config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            model=config.model,
+            tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            toolsets=config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             system_prompt=self.instruction,
             name=self.agent_name,
         )
 
         def tool_result_event_handler(e: FunctionToolResultEvent):
             ctx.deps.console.print(
-                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️ [bold cyan]{e.result.tool_name}[/]",
                 extra_param=ExtraParam(markdownify=False),
             )
 

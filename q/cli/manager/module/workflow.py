@@ -15,11 +15,10 @@ class WorkflowModule(Module):
 
 
 class WorkflowManager(BaseModuleManager):
-    @property
-    def modules(self) -> list[WorkflowModule]:
+    def modules(self) -> list[WorkflowModule]: # type: ignore
         modules: list[WorkflowModule] = []
 
-        for module in super().modules:
+        for module in super().modules():
             if workflow_classes := self._workflow_classes(module.mod):
                 # this module has several workflow classes, then it's the valid workflow module
                 modules.append(
@@ -53,7 +52,7 @@ class WorkflowManager(BaseModuleManager):
     def workflow_map(self) -> dict[str, type[BaseWorkflow]]:
         _workflow_map: dict[str, type[BaseWorkflow]] = deepcopy(WORKFLOW_MAP)
 
-        for module in self.modules:
+        for module in self.modules():
             for cls in module.workflow_classes:
                 _workflow_map[cls.__name__] = cls
 

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from typing import cast
 
 from pydantic_ai.messages import (
     BaseToolCallPart,
@@ -46,6 +47,7 @@ def query(user_input: str, extra_tool_names: list[str], plain: bool = False, wor
         working_dir (str | Path): working directory containing config and history
     """
     assert user_input, "user_input should not be empty"
+    working_dir = Path(working_dir)
 
     workflow_config = load_config(working_dir)
     workflow_name = workflow_config.workflow_name
@@ -308,7 +310,7 @@ def print_workflows():
     table.add_column("Module", style="magenta")
     table.add_column("Deletable", style="green", justify="right")
 
-    for module in workflow_manager.modules:
+    for module in workflow_manager.modules():
         for cls in module.workflow_classes:
             table.add_row(cls.__name__, module.mod_name, "True")
 
@@ -342,11 +344,11 @@ def print_tools():
     table.add_column("Tool", style="cyan")
     table.add_column("Module", style="magenta")
     table.add_column("Deletable", style="green", justify="right")
-    for module in tool_manager.modules:
+    for module in tool_manager.modules():
         for tool in module.tool_functions:
             table.add_row(tool.__name__, module.mod_name, "True")
 
-    for name in InternalToolMap.dict.keys():
+    for name in InternalToolMap.keys():
         table.add_row(name, "Internal", "False")
 
     console.print(table)
@@ -387,7 +389,7 @@ def add_tool_mod(list_of_mod_path_or_json: list[str | Path]):
         tool_mod_paths (list[str  |  Path]): module paths
     """
 
-    def is_json(mod_path_or_json):
+    def is_json(mod_path_or_json) -> bool:
         with suppress(Exception):
             json.loads(mod_path_or_json)
             return True
@@ -396,7 +398,7 @@ def add_tool_mod(list_of_mod_path_or_json: list[str | Path]):
 
     for mod_path_or_json in list_of_mod_path_or_json:
         if is_json(mod_path_or_json):
-            config_json = mod_path_or_json
+            config_json = cast(str, mod_path_or_json)
             mcp_manager.add_config_json(config_json)
         else:
-            tool_manager.add_modules([mod_path_or_json])
+            tool_manager.add_module(mod_path_or_json)

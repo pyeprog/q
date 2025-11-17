@@ -68,15 +68,25 @@ def create_duckduckgo_search_tool(max_results: int = 5, max_retries: int | None 
 
 
 class InternalToolMap(ToolMap):
-    dict = {
-        "think": think_tool,
-        "tavily_search": create_tavily_search_tool(),
-        "tavily_search_3_retries": create_tavily_search_tool(max_retries=3),
-        "duckduckgo_search": create_duckduckgo_search_tool(),
-        "duckduckgo_search_3_retries": create_duckduckgo_search_tool(max_retries=3),
-        "duckduckgo_search_extensively": create_duckduckgo_search_tool(max_results=10, max_retries=3),
-    }
+    @classmethod
+    def dict(cls):
+        # keep the dict inside function instead of putting it under class scope directly.
+        # in this way the tavily search tool will be initialized only when we run the query and only at that moment,
+        # it will be initialized correctly, cause there's an .env file under working directory at that time.
+        # If we put it under class scope, it will be fired in import-time, which will cause bugs.
+        return {
+            "think": think_tool,
+            "tavily_search": create_tavily_search_tool(),
+            "tavily_search_3_retries": create_tavily_search_tool(max_retries=3),
+            "duckduckgo_search": create_duckduckgo_search_tool(),
+            "duckduckgo_search_3_retries": create_duckduckgo_search_tool(max_retries=3),
+            "duckduckgo_search_extensively": create_duckduckgo_search_tool(max_results=10, max_retries=3),
+        }
+
+    @classmethod
+    def keys(cls):
+        return ["think", "tavily_search", "tavily_search_3_retries", "duckduckgo_search", "duckduckgo_search_3_retries", "duckduckgo_search_extensively"]
 
     @classmethod
     def get[T](cls, key: str, default: T | None = None, /) -> Callable | T:
-        return cls.dict.get(key, default)
+        return cls.dict().get(key, default)

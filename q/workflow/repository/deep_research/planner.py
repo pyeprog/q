@@ -28,7 +28,7 @@ class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthropomorp
     async def run(self, ctx: GraphRunContext[DeepResearchState, BaseDeps]) -> Supervise:
         def tool_result_event_handler(e: FunctionToolResultEvent):
             ctx.deps.console.print(
-                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️ [bold cyan]{e.result.tool_name}[/]",
                 extra_param=ExtraParam(markdownify=False),
             )
 
@@ -39,6 +39,7 @@ class Plan(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthropomorp
             system_prompt=self.sys_prompt,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            toolsets=config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             name=self.agent_name,
         )
 

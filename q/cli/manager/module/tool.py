@@ -15,11 +15,10 @@ class ToolModule(Module):
 
 
 class ToolManager(BaseModuleManager):
-    @property
-    def modules(self) -> list[ToolModule]:
+    def modules(self) -> list[ToolModule]: # type: ignore
         tool_modules: list[ToolModule] = []
 
-        for module in super().modules:
+        for module in super().modules():
             if tool_functions := self._tool_functions(module.mod):
                 tool_modules.append(
                     ToolModule(
@@ -49,9 +48,9 @@ class ToolManager(BaseModuleManager):
 
     @property
     def tool_map(self) -> dict[str, Callable]:
-        _map: dict[str, Callable] = deepcopy(InternalToolMap.dict)
+        _map: dict[str, Callable] = deepcopy(InternalToolMap.dict())
 
-        for tool_module in self.modules:
+        for tool_module in self.modules():
             for tool_function in tool_module.tool_functions:
                 _map.setdefault(tool_function.__name__, tool_function)
 

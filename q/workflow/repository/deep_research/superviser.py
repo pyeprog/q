@@ -39,7 +39,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
 
         def tool_result_event_handler(e: FunctionToolResultEvent):
             ctx.deps.console.print(
-                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️ [bold cyan]{e.result.tool_name}[/]",
                 extra_param=ExtraParam(markdownify=False),
             )
 
@@ -49,6 +49,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
             deps_type=BaseDeps,
             system_prompt=self.sys_prompt,
             tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names) + [agent_research_tool],
+            toolsets=config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names), # type: ignore
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             name=self.agent_name,
         )
@@ -135,7 +136,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
 
         def tool_result_event_handler(e: FunctionToolResultEvent):
             ctx.deps.console.print(
-                f"🧙[bold magenta]Researcher[/]([green]{human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                f"🧙[bold magenta]Researcher[/]([green]{human_name}[/]) 🤙 🛠️ [bold cyan]{e.result.tool_name}[/]",
                 extra_param=ExtraParam(markdownify=False),
             )
 
@@ -144,6 +145,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
             model=config.model,
             instructions=format_as_xml(_instruction),
             tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            toolsets=config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             retries=3,
             event_stream_handler=agent_event_stream_handler([tool_result_event_handler]),
             name=cls.sub_agent_name,

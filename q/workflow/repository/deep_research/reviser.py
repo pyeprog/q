@@ -34,7 +34,7 @@ class UserConfirmed(BaseModel):
 class UserRevise(BaseNode[DeepResearchState, BaseDeps], NodeToHalt):
     user_input: str = field(default="")
 
-    async def run(self, ctx: GraphRunContext[DeepResearchState]) -> "Revise":
+    async def run(self, ctx: GraphRunContext[DeepResearchState, BaseDeps]) -> "Revise":
         return Revise(self.user_input)
 
 
@@ -48,8 +48,9 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
         agent = Agent(
             model=config.model,
             system_prompt=self.sys_prompt,
-            output_type=UserConfirming | ContinueRevising | UserConfirmed,
-            tools=config.tools(ctx.deps.extra_tool_names, extra_tool_names=ctx.deps.extra_tool_names),
+            output_type=[UserConfirming, ContinueRevising, UserConfirmed],
+            tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            toolsets=config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             name=self.agent_name,
         )
 
@@ -67,7 +68,7 @@ class Revise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode):
             return UserRevise()
 
         ctx.state.user_requirement += response.new_messages()[1:]  # ignore the request message
-
+        assert isinstance(response.output, UserConfirmed)
         return Plan(response.output.final_requirement)
 
     @classmethod

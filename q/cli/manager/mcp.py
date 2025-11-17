@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Literal
 from more_itertools import first
 from pydantic import BaseModel, Field, TypeAdapter
+from pydantic_ai import AbstractToolset, ToolsetFunc
 
 from q.cli.constant import CONFIG_HOME
 from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio, MCPServerStreamableHTTP
@@ -73,8 +74,8 @@ class StreamableHttpMCP(BaseModel):
         """
         config_dict = json.loads(json_str)
         name, config = first(config_dict["mcpServers"].items())
-        assert "sse" not in config["url"].lower()
-        return cls(name=name, url=config["url"])
+        assert "sse" not in config["serverUrl"].lower()
+        return cls(name=name, url=config["serverUrl"])
 
 
 class SSEMCP(BaseModel):
@@ -105,7 +106,7 @@ class SSEMCP(BaseModel):
         """
         config_dict = json.loads(json_str)
         name, config = first(config_dict["mcpServers"].items())
-        return cls(name=name, url=config["url"])
+        return cls(name=name, url=config["serverUrl"])
 
 
 class MCPManager:
@@ -130,8 +131,11 @@ class MCPManager:
     def mcp_names(self) -> list[str]:
         return [mcp.name for mcp in self.mcps]
 
-    def get[T](self, mcp_name: str, default: T | None = None, /) -> StreamableHttpMCP | SSEMCP | StdioMCP | T | None:
-        return self.mcp_map.get(mcp_name, default)
+    def get[T](self, mcp_name: str, default: T | None = None, /) -> AbstractToolset | ToolsetFunc | T | None:
+        if mcp := self.mcp_map.get(mcp_name):
+            return mcp.toolset
+
+        return default
 
     def add_config_json(self, json_str: str):
         mcp = None

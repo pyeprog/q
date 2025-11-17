@@ -40,7 +40,8 @@ class Review(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, NodeToHalt
             model=config.model,
             system_prompt=self.sys_prompt,
             tools=config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
-            output_type=DeepenResearch | ContinueReviewing,
+            toolsets=config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            output_type=[DeepenResearch, ContinueReviewing],
             name=self.agent_name,
         )
 

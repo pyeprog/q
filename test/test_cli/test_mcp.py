@@ -6,6 +6,7 @@ from typing import Generator
 
 import pytest
 from q.cli.manager.mcp import SSEMCP, MCPManager, StreamableHttpMCP
+from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio, MCPServerStreamableHTTP
 
 
 @pytest.fixture
@@ -42,10 +43,10 @@ def test_add_get_and_remove_stdio_mcp(mcp_manager):
     assert "youtube" in mgr.mcp_names
 
     m = mgr.get("youtube")
-    assert m.name == "youtube"
+    assert isinstance(m, MCPServerStdio)
     assert getattr(m, "command", None) == "npx"
     assert m.args == ["-y", "zubeid-youtube-mcp-server"]
-    assert m.envs["YOUTUBE_API_KEY"] == "key"
+    assert m.env["YOUTUBE_API_KEY"] == "key" # type: ignore
 
     # persisted to disk
     mgr2 = MCPManager(mgr.dir_path)
@@ -60,17 +61,32 @@ def test_add_get_and_remove_stdio_mcp(mcp_manager):
 def test_add_streamable_and_sse(mcp_manager):
     mgr = mcp_manager
 
-    stream_json = json.dumps({"mcpServers": {"deepwiki": {"url": "https://mcp.deepwiki.com/mcp"}}})
-    sse_json = json.dumps({"mcpServers": {"sse_server": {"url": "https://mcp.example.com/sse"}}})
+    stream_json = json.dumps({"mcpServers": {"deepwiki": {"serverUrl": "https://mcp.deepwiki.com/mcp"}}})
+    sse_json = json.dumps({"mcpServers": {"sse_server": {"serverUrl": "https://mcp.example.com/sse"}}})
 
     mgr.add_config_json(stream_json)
     assert "deepwiki" in mgr.mcp_names
     deep = mgr.get("deepwiki")
-    assert isinstance(deep, StreamableHttpMCP)
+    assert isinstance(deep, MCPServerStreamableHTTP)
+
     assert getattr(deep, "url", "").startswith("https://")
 
     mgr.add_config_json(sse_json)
     assert "sse_server" in mgr.mcp_names
     sse = mgr.get("sse_server")
-    assert isinstance(sse, SSEMCP)
+    assert isinstance(sse, MCPServerSSE)
     assert sse.url.endswith("/sse")
+
+
+def test_load_sse():
+    _json = """
+    {
+      "mcpServers": {
+        "deepwiki": {
+          "serverUrl": "https://mcp.deepwiki.com/sse"
+        }
+      }
+    }
+    """
+    mcp = SSEMCP.from_json(_json)
+    assert isinstance(mcp, SSEMCP)

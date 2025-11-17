@@ -1,6 +1,6 @@
 # Q
 
-"q" means query, which is a cli for agent application, including simple chatting, workflow, agentic action and more. 
+"q" means query, which is a cli for agent application, including simple chatting, workflow, agentic action and more.
 
 ## Features
 
@@ -10,73 +10,95 @@
 4. local directory as chat cache, you can config model, tools, workflow, even edit message history with chat cache.
 
 
-## How to
+## How To
 
-### create a query
+The CLI program is `q`. Available subcommands and their aliases:
 
-```bash
-q c <path> --workflow default
-ls -a <path>
-# agent_config.json .env
-```
+- `say` (`s`): chat with an agent or workflow
+- `create` (`c`): create and initialize a query directory
+- `info`: show meta info about a query directory
+- `ls`: list messages stored in a query directory
+- `config`: set/unset configuration keys
+- `workflow` (`w`): add/remove/list workflows
+- `tool` (`t`): add/remove/list function tools
 
-```bash
-q c <path> --w research -r <other-path>
-ls -a <path>
-# agent_config.json .env history.json
-```
+Examples and common usage:
 
-### chat with agent
+- Create a query directory (default workflow is `default`):
 
-```bash
-cd <path>
-q s "who are you?"
-# I'm xxx model made by xxx company
-```
+	```bash
+	q create <path> --workflow default
+	# or using the alias
+	q c <path> -w default
+	```
 
-### manage chatting history
+	- `--refer_dir` / `-r` : copy settings from an existing query directory
+	- `--extra_tools` / `-t` : comma-separated function tool names to register
 
-```bash
-cd <path>
-q info <dir>
-q info # default directory is current directory
-# there are 23 versions of snapshot, index `[0-22]` or `latest` to retrive the last one, if not given, the default will be latest
-# these fields are supported: a, b, c, d, .... if not given, the first field will be retrieve
+- Create from another query directory:
 
-q ls <dir> 
-q ls # default directory is current directory
-# snapshot = latest, field will the first one retrieved
-# messages...
+	```bash
+	q c <path> --w research -r /path/to/other/query
+	```
 
-q ls --snapshot 3 
-# snapshot = 3, field will be the first one retrieved
-# messages... 
+- Chat with the agent/workflow (run inside the query directory):
 
-q ls --snapshot latest --field <name>
-# snapshot = latest, field will be the <name>
-# messages...
-```
+	```bash
+	cd <query-dir>
+	q say "who are you?"
+	# alias
+	q s "who are you?"
+	```
 
-### config
+	Options:
+	- `--extra_tools` / `-t` : specify extra tools as a comma-separated list (e.g. `toolA,toolB`)
+	- `--plain` / `-p` : print plain text without rich formatting
 
-```bash
-q config --set key1=value1 key2=value2
-q config --unset key1 key2
-q config  # print content of the config and path of the config file
-```
+- Inspect a query directory:
 
-### workflow
+	```bash
+	q info [directory]
+	# default is the current directory when not provided
+	```
 
-```bash
-q workflow # list all available workflows
-q workflow --add <py-file-or-py-mod>
-q workflow --rm <name>
-```
+- List stored messages and snapshots:
 
-### tool
+	```bash
+	q ls [directory] [--snapshot N|latest] [--field name]
+	# examples
+	q ls
+	q ls --snapshot 3
+	q ls --snapshot latest --field first
+	```
 
-```bash
-q tool # list all available tools
-q tool --add <py-file-or-py-mod>
-q tool --rm <name>
-```
+- Config management:
+
+	```bash
+	q config --set key1=value1 key2=value2
+	q config --unset key1 key2
+	q config  # print current config and config file path
+	```
+
+- Workflow management:
+
+	```bash
+	q workflow    # list available workflows
+	q workflow --add /path/to/module.py   # add workflow module (can be a file or module path)
+	q workflow --rm workflow_module_name  # remove by module name
+	```
+
+- Tool management:
+
+	```bash
+	q tool    # list available tools
+	q tool --add some.module.or.path     # add tool module
+	q tool --rm tool_module_name         # remove tool by module name
+	```
+
+Notes:
+
+- Directory arguments accept filesystem paths (they are parsed as `Path`).
+- Many `--add` flags accept multiple values; pass several entries separated by spaces.
+- `--extra_tools` expects a comma-separated list when given as a single string.
+
+For full CLI help and available options, run `q -h` or `q <subcommand> -h`.

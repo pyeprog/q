@@ -30,12 +30,13 @@ class Chat(BaseNode[DefaultState, BaseDeps], ConfigurableNode, Anthropomorphic):
         agent = Agent(
             model=agent_config.model,
             tools=agent_config.tools(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
+            toolsets=agent_config.toolsets(ctx.deps.tool_map, extra_tool_names=ctx.deps.extra_tool_names),
             name=self.agent_name,
         )
 
         def tool_result_event_handler(e: FunctionToolResultEvent):
             ctx.deps.console.print(
-                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️[bold cyan]{e.result.tool_name}[/]",
+                f"🧙[bold magenta]{self.__class__.__name__}[/]([green]{self.human_name}[/]) 🤙 🛠️ [bold cyan]{e.result.tool_name}[/]",
                 extra_param=ExtraParam(markdownify=False),
             )
 

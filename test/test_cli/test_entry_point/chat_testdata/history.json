@@ -450,8 +450,2345 @@
     },
     "start_ts": null,
     "duration": null,
-    "status": "created",
+    "status": "pending",
     "kind": "node",
     "id": "Halt:8cbd991d2cbe4449b07fbfb49dfa8e3b"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-16T13:49:18.228274Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_aQakT5Ij479NPD8BU222",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 236,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-16T13:49:18Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763300958-1yGzv1nyFyNCgHCC18Wr",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_aQakT5Ij479NPD8BU222",
+              "metadata": null,
+              "timestamp": "2025-11-16T13:49:19.511012Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 274,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-16T13:49:19Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763300959-UYJYMfneGd8lORhtESdM",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-16T13:59:43.846338Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_KgYCON2FfJBDbZPFYHeD",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 303,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-16T13:59:44Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763301584-0fSiiGDOt1XdPOcKLpvr",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_KgYCON2FfJBDbZPFYHeD",
+              "metadata": null,
+              "timestamp": "2025-11-16T13:59:45.096662Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 339,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-16T13:59:45Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763301585-fkaMJrABIFdqTQyneOx8",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:21:46.698465Z",
+    "duration": 0.2680089169953135,
+    "status": "error",
+    "kind": "node",
+    "id": "Chat:a664736f765a42949296fcd212cfd777"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:24:20.079763Z",
+    "duration": 0.15980829099862603,
+    "status": "error",
+    "kind": "node",
+    "id": "Chat:4e3c026b14f94beea254daf1b1c82142"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:27:08.760224Z",
+    "duration": null,
+    "status": "running",
+    "kind": "node",
+    "id": "Chat:3729700b65b142618853429128c3dc5d"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:32:14.092432Z",
+    "duration": 28.13614908299496,
+    "status": "error",
+    "kind": "node",
+    "id": "Chat:b6674f6e59a2407e97b54ae98498d910"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:50:04.721113Z",
+    "duration": 3.777586832999077,
+    "status": "success",
+    "kind": "node",
+    "id": "Chat:f7541f3ac94243bd97181211e32cb888"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-17T02:50:04.733079Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_z5T6nTKZa7jvXhdIKsqK",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 236,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:50:06Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763347805-QxHzEJvHs3kwOhSuCHOE",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_z5T6nTKZa7jvXhdIKsqK",
+              "metadata": null,
+              "timestamp": "2025-11-17T02:50:07.128626Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 273,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:50:07Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763347807-7uUyLZUPzpWGp2pPQ9yW",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "pending",
+    "kind": "node",
+    "id": "Halt:4ac3fad51e564ca691684507502ca66c"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-17T02:50:04.733079Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_z5T6nTKZa7jvXhdIKsqK",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 236,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:50:06Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763347805-QxHzEJvHs3kwOhSuCHOE",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_z5T6nTKZa7jvXhdIKsqK",
+              "metadata": null,
+              "timestamp": "2025-11-17T02:50:07.128626Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 273,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:50:07Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763347807-7uUyLZUPzpWGp2pPQ9yW",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:50:16.104870Z",
+    "duration": null,
+    "status": "running",
+    "kind": "node",
+    "id": "Chat:e8b2de397e5b4f6cb7dccfe1b24d4a77"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T02:52:13.689215Z",
+    "duration": 2.5849722920029308,
+    "status": "success",
+    "kind": "node",
+    "id": "Chat:751dcf8ae4884735888e029cf43f828a"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-17T02:52:13.701102Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_xptgKjztDmTGFEeyicBN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 236,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:52:14Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763347934-oRwcoCkMhS3lT7XL3hwc",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_xptgKjztDmTGFEeyicBN",
+              "metadata": null,
+              "timestamp": "2025-11-17T02:52:14.864699Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 270,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:52:15Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763347934-tH5b8vBlpTMUVSucbtvk",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "pending",
+    "kind": "node",
+    "id": "Halt:97bd072b3d69453c8853980d53bb23f8"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-17T02:52:13.701102Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_xptgKjztDmTGFEeyicBN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 236,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:52:14Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763347934-oRwcoCkMhS3lT7XL3hwc",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_xptgKjztDmTGFEeyicBN",
+              "metadata": null,
+              "timestamp": "2025-11-17T02:52:14.864699Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 270,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T02:52:15Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763347934-tH5b8vBlpTMUVSucbtvk",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "user_input": "what does echo mcp say?",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:19:18.342817Z",
+    "duration": 0.15940833399508847,
+    "status": "error",
+    "kind": "node",
+    "id": "Chat:2ab550f9ae914265b1202735774ecb88"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what does echo mcp say?",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:20:24.655197Z",
+    "duration": null,
+    "status": "running",
+    "kind": "node",
+    "id": "Chat:51a0ecdc93a64e1ba2d845acafe73abe"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what does echo mcp say?",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:23:51.073942Z",
+    "duration": null,
+    "status": "running",
+    "kind": "node",
+    "id": "Chat:5eaf84c9fd4a4fa19f2b7f6df8437141"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what does echo mcp say?",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:24:36.537537Z",
+    "duration": 0.16785187499772292,
+    "status": "error",
+    "kind": "node",
+    "id": "Chat:9d40c70c5a84479b9ad9cb1070f79fa6"
+  },
+  {
+    "state": {
+      "message_history": []
+    },
+    "node": {
+      "user_input": "what's the result of 2123123 / 1441",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:41:36.870188Z",
+    "duration": 6.4326916669961065,
+    "status": "success",
+    "kind": "node",
+    "id": "Chat:bcb34cab04e54eb3a7cb728f30bfcca6"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "pending",
+    "kind": "node",
+    "id": "Halt:b7b3bc8629774904ba5aa029ee1745b4"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "user_input": "what's the result of 2123123 / 1441",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:44:25.531345Z",
+    "duration": 5.646731542001362,
+    "status": "success",
+    "kind": "node",
+    "id": "Chat:36681be986874e72a3b4211d6069f75e"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:44:28.008512Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 238,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:28Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351068-wrOx8lNj1bDrwD5jEEWh",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:44:30.307606Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 322,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:30Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351070-xkvEEJfR28j0fKNVx9iv",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "pending",
+    "kind": "node",
+    "id": "Halt:70ee1236ab2e44a5b22fb16ee24f6f77"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:44:28.008512Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 238,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:28Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351068-wrOx8lNj1bDrwD5jEEWh",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:44:30.307606Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 322,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:30Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351070-xkvEEJfR28j0fKNVx9iv",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "user_input": "what's the result of 2123123 / 1441",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T03:50:30.742514Z",
+    "duration": 5.6632353750028415,
+    "status": "success",
+    "kind": "node",
+    "id": "Chat:fa54fb2d0c3840038098098ce246b691"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:44:28.008512Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 238,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:28Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351068-wrOx8lNj1bDrwD5jEEWh",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:44:30.307606Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 322,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:30Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351070-xkvEEJfR28j0fKNVx9iv",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:50:33.152746Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_6yqxjqYQ9UgYuB4GAffC",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 372,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:50:33Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351433-vgbhBXem3qDRgTxA8EQG",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_6yqxjqYQ9UgYuB4GAffC",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:50:35.562656Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 455,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:50:35Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351435-mXrHTxRbP1JTR5FIs01D",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "pending",
+    "kind": "node",
+    "id": "Halt:3b707a43c6aa4107b82c6a446423bc75"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:44:28.008512Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 238,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:28Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351068-wrOx8lNj1bDrwD5jEEWh",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:44:30.307606Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 322,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:30Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351070-xkvEEJfR28j0fKNVx9iv",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:50:33.152746Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_6yqxjqYQ9UgYuB4GAffC",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 372,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:50:33Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351433-vgbhBXem3qDRgTxA8EQG",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_6yqxjqYQ9UgYuB4GAffC",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:50:35.562656Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 455,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:50:35Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351435-mXrHTxRbP1JTR5FIs01D",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "user_input": "what's the name of employee 123532",
+      "node_id": "Chat"
+    },
+    "start_ts": "2025-11-17T05:58:41.500813Z",
+    "duration": 1.9330518749993644,
+    "status": "success",
+    "kind": "node",
+    "id": "Chat:7cf93c478fab4f7e9e8cec65bf7f880e"
+  },
+  {
+    "state": {
+      "message_history": [
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:41:39.291840Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 104,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:39Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763350899-AnIGRr5W8VDxNWAjorkR",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_8ngpWRpEKOOL0aM2YT4f",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:41:42.424191Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 188,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:41:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763350902-6Pg4yurZMOV6DeqNeaBI",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:44:28.008512Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 238,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:28Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351068-wrOx8lNj1bDrwD5jEEWh",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_vWjvXqEQ35U9MeQQpIZN",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:44:30.307606Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 322,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:44:30Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351070-xkvEEJfR28j0fKNVx9iv",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the result of 2123123 / 1441",
+              "timestamp": "2025-11-17T03:50:33.152746Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "args": "{\"python_code\":\"print(2123123 / 1441)\"}",
+              "tool_call_id": "tool_0_run_python_code_6yqxjqYQ9UgYuB4GAffC",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 372,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 24,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:50:33Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763351433-vgbhBXem3qDRgTxA8EQG",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "run_python_code",
+              "content": "<status>success</status>\n<output>\n1473.3678001387925\n</output>",
+              "tool_call_id": "tool_0_run_python_code_6yqxjqYQ9UgYuB4GAffC",
+              "metadata": null,
+              "timestamp": "2025-11-17T03:50:35.562656Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The result of 2123123 / 1441 is approximately 1473.3678.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 455,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 31,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T03:50:35Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763351435-mXrHTxRbP1JTR5FIs01D",
+          "finish_reason": "stop"
+        },
+        {
+          "parts": [
+            {
+              "content": "what's the name of employee 123532",
+              "timestamp": "2025-11-17T05:58:41.513354Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "args": "{\"id\":\"123532\"}",
+              "tool_call_id": "tool_0_employees_kiW50YbNRQ4q4YQm9RTQ",
+              "id": null,
+              "part_kind": "tool-call"
+            }
+          ],
+          "usage": {
+            "input_tokens": 637,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 8,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T05:58:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "tool_calls"
+          },
+          "provider_response_id": "gen-1763359122-xy36pAh1RSA5P4X8dude",
+          "finish_reason": "tool_call"
+        },
+        {
+          "parts": [
+            {
+              "tool_name": "employees",
+              "content": {
+                "name": "Jane Doe",
+                "age": 38,
+                "gender": "Female",
+                "salary": 0
+              },
+              "tool_call_id": "tool_0_employees_kiW50YbNRQ4q4YQm9RTQ",
+              "metadata": null,
+              "timestamp": "2025-11-17T05:58:42.785899Z",
+              "part_kind": "tool-return"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "The name of employee 123532 is Jane Doe.\n",
+              "id": null,
+              "part_kind": "text"
+            }
+          ],
+          "usage": {
+            "input_tokens": 676,
+            "cache_write_tokens": 0,
+            "cache_read_tokens": 0,
+            "output_tokens": 16,
+            "input_audio_tokens": 0,
+            "cache_audio_read_tokens": 0,
+            "output_audio_tokens": 0,
+            "details": {
+              "is_byok": 0,
+              "reasoning_tokens": 0,
+              "image_tokens": 0
+            }
+          },
+          "model_name": "google/gemini-2.0-flash-001",
+          "timestamp": "2025-11-17T05:58:42Z",
+          "kind": "response",
+          "provider_name": "openrouter",
+          "provider_details": {
+            "finish_reason": "stop"
+          },
+          "provider_response_id": "gen-1763359122-P4hQ86oI31kawYNc8PF6",
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "node": {
+      "node_id": "Halt"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "created",
+    "kind": "node",
+    "id": "Halt:b584d4e2aadb4fdda74633d6df9cd70c"
   }
 ]

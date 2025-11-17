@@ -38,7 +38,6 @@ class BaseModuleManager(ABC):
         copy_method = shutil.copy if src.is_file else shutil.copytree
         copy_method(src=src, dst=dst)
 
-    @property
     def modules(self) -> list[Module]:
         mods: list[Module] = []
 
@@ -66,7 +65,7 @@ class BaseModuleManager(ABC):
         return mods
 
     def rm_modules(self, mod_names: list[str]):
-        module_map = {m.mod_name: m for m in self.modules}
+        module_map = {m.mod_name: m for m in self.modules()}
         for target_mod_name in mod_names:
             if target_mod_name not in module_map:
                 continue
@@ -77,17 +76,20 @@ class BaseModuleManager(ABC):
     def is_module(path: Path) -> bool:
         return (path.is_file() and str(path).endswith(".py")) or (path.is_dir() and (path / "__init__.py").is_file())
 
+    def add_module(self, mod_path: str | Path):
+        mod_path = Path(mod_path)
+
+        if not self.is_module(mod_path):
+            # it's not valid python module
+            return
+
+        # otherwise, it's valid python module, copy them to the workflow directory
+        self.cp(src=mod_path, dst=self.dir_path)
+
     def add_modules(self, mod_paths: list[str | Path]):
         # add modules to certain directory
         for src_path in mod_paths:
-            src_path = Path(src_path)
-
-            if not self.is_module(src_path):
-                # it's not valid python module
-                continue
-
-            # otherwise, it's valid python module, copy them to the workflow directory
-            self.cp(src=src_path, dst=self.dir_path)
+            self.add_module(src_path)
 
         # no need for a further check of module's content
         # if it's not valid, it might be removed when walk through the directory
