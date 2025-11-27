@@ -56,7 +56,7 @@ class Searcher(BaseNode[State, BaseDeps], ConfigurableNode, Anthropomorphic):
 
     @classmethod
     def agent_config(cls) -> AgentConfigMap:
-        return {cls.agent_name: AgentConfig(tool_names={"duckduckgo_search_extensively", "tavily_search_3_retries"})}
+        return {cls.agent_name: AgentConfig(tool_names={"duckduckgo_search_3_retries", "tavily_search_3_retries"})}
 
     @property
     def instruction(self) -> str:

@@ -107,6 +107,23 @@ def parser():
         help="the field of the state, default to use the `first` field",
         metavar="field-name",
     )
+    ls_parser.add_argument(
+        "--plain",
+        "-p",
+        action="store_true",
+        dest="plain",
+        help="print plain text without rich formatting",
+    )
+    ls_parser.add_argument(
+        "--start-index",
+        "-i",
+        type=int,
+        default=0,
+        nargs="?",
+        dest="start_index",
+        help="the start index of snapshot to list from, default to 0",
+        metavar="start-index",
+    )
 
     config_parser = subcommand.add_parser("config", help="config platform keys, default model, and more")
     config_parser.add_argument(

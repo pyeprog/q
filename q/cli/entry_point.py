@@ -32,7 +32,7 @@ from q.cli.config import centralized_config
 from q.cli.manager.module.workflow import workflow_manager
 from q.cli.manager.module.tool import tool_manager
 from q.workflow.util.node import ConfigurableNode
-from q.cli.console import CliConsole, panel_param_by_content, console
+from q.cli.console import CliConsole, panel_param_by_content
 from q.workflow.util.output import ExtraParam
 from q.cli.manager.mcp import SSEMCP, StdioMCP, StreamableHttpMCP, mcp_manager
 
@@ -53,11 +53,11 @@ def query(user_input: str, extra_tool_names: list[str], plain: bool = False, wor
     workflow_name = workflow_config.workflow_name
 
     workflow_cls = workflow_manager.workflow_map.get(workflow_name, None)
+    console = CliConsole(plain)
 
     if not workflow_cls:
-        print(
-            f"Workflow {workflow_name} not found, use workflow command to check them out",
-            file=sys.stderr,
+        console.print(
+            f"Workflow {workflow_name} not found, use workflow command to check them out"
         )
         exit(1)
 
@@ -65,7 +65,7 @@ def query(user_input: str, extra_tool_names: list[str], plain: bool = False, wor
         deps=BaseDeps(
             tool_map=GlobalToolMap,
             extra_tool_names=extra_tool_names,
-            console=CliConsole(plain),
+            console=console,
             gen_agent_extra_param=lambda title: ExtraParam(panel_param_by_content(title)),
             working_dir=working_dir,
         ),
@@ -82,12 +82,13 @@ def create_query(directory: str | Path, workflow: str, extra_tool_names: list[st
         extra_tool_names (list[str]): extra function tool names
         refer_dir (str): referenced directory(other query directory), which is used when you want to refer its message history
     """
+    console = CliConsole()
+
     # create directory if it's not existed
     path = Path(directory)
     if path.is_file():
-        print(
+        console.print(
             f"Path {str(path)!r} is a file, please provide a directory path.",
-            file=sys.stderr,
         )
         exit(1)
 
@@ -106,7 +107,7 @@ def create_query(directory: str | Path, workflow: str, extra_tool_names: list[st
     workflow_cls = workflow_map.get(workflow, None)
 
     if not workflow_cls:
-        print(f"Workflow {workflow} not found, use workflow command to check them out", file=sys.stderr)
+        console.print(f"Workflow {workflow} not found, use workflow command to check them out")
         exit(1)
 
     workflow_graph = workflow_cls.graph()
@@ -131,7 +132,7 @@ def create_query(directory: str | Path, workflow: str, extra_tool_names: list[st
     async def _helper():
         ref_path = Path(refer_dir)
         if not (ref_path.is_dir() and (ref_path / "history.json").is_file()):
-            print(f"Path {refer_dir} is not valid query", file=sys.stderr)
+            console.print(f"Path {refer_dir} is not valid query")
             exit(1)
 
         loader = LocalConfigLoader(ref_path, workflow_map)
@@ -153,7 +154,7 @@ def create_query(directory: str | Path, workflow: str, extra_tool_names: list[st
             editor_cmd = centralized_config.config.get("EDITOR", "vim")
             subprocess.run([editor_cmd, temporary_filename], check=True)
         except Exception as e:
-            print(f"An unexpected error occurred while invoking editor: {e}", file=sys.stderr)
+            console.print(f"An unexpected error occurred while invoking editor: {e}")
             exit(1)
 
         # make a temporary file for further edit
@@ -169,7 +170,7 @@ def create_query(directory: str | Path, workflow: str, extra_tool_names: list[st
         # generate a state according to reference state and translation rule in the config
         snapshots = await loader.snapshots()
         if not snapshots:
-            print(f"No snapshots found in refer directory {refer_dir}", file=sys.stderr)
+            console.print(f"No snapshots found in refer directory {refer_dir}")
             exit(1)
 
         src_state = snapshots[-1].state
@@ -198,6 +199,7 @@ def info(directory: str | Path):
     Args:
         directory (str): specified directory
     """
+    console = CliConsole()
 
     async def _helper():
         loader = LocalConfigLoader(directory, workflow_manager.workflow_map)
@@ -212,14 +214,17 @@ def info(directory: str | Path):
     asyncio.run(_helper())
 
 
-def ls(directory: str | Path, snapshot: int, field: str):
+def ls(directory: str | Path, snapshot: int, field: str, start_index: int = 0, plain: bool = False):
     """list query messages
 
     Args:
         directory (str): specified directory
         snapshot (str): the index of snapshot
         field (str): the field of state
+        start_index (int): the start index of snapshot to list from
+        plain (bool): whether to print plain text without rich formatting
     """
+    console = CliConsole(plain)
 
     async def _helper():
         loader = LocalConfigLoader(directory, workflow_manager.workflow_map)
@@ -234,41 +239,46 @@ def ls(directory: str | Path, snapshot: int, field: str):
             all_fields = fields(state)
             chosen_field = all_fields[0].name
 
-        for msg in getattr(state, chosen_field):
-            for part in getattr(msg, "parts", []):
-                if isinstance(part, UserPromptPart):
-                    console.print(part.content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
+        def iter_through(_state, _field):
+            for msg in getattr(_state, _field):
+                for part in getattr(msg, "parts", []):
+                    yield part
 
-                elif isinstance(part, BaseToolCallPart):
-                    lines: list[str] = []
-                    for key, value in part.args_as_dict().items():
-                        if hasattr(value, "__str__"):  # value is printable
-                            lines.append(f"# {key}")
-                            lines.append(value)
+        for part in list(iter_through(state, chosen_field))[start_index:]:
+            if isinstance(part, UserPromptPart):
+                console.print(part.content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
 
-                    content = "\n".join(lines)
-                    console.print(
-                        content, extra_param=ExtraParam(panel_param_by_content(getattr(part, "part_kind", "tool-call")))
-                    )
+            elif isinstance(part, BaseToolCallPart):
+                lines: list[str] = []
+                for key, value in part.args_as_dict().items():
+                    if hasattr(value, "__str__"):  # value is printable
+                        lines.append(f"# {key}")
+                        lines.append(value)
 
-                elif isinstance(part, BaseToolReturnPart):
-                    console.print(
-                        part.content,
-                        extra_param=ExtraParam(panel_param_by_content(getattr(part, "part_kind", "tool-return"))),
-                    )
+                content = "\n".join(lines)
+                console.print(
+                    content, extra_param=ExtraParam(panel_param_by_content(getattr(part, "part_kind", "tool-call")))
+                )
 
-                elif isinstance(part, (RetryPromptPart, TextPart, ThinkingPart)):
-                    console.print(part.content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
+            elif isinstance(part, BaseToolReturnPart):
+                console.print(
+                    part.content,
+                    extra_param=ExtraParam(panel_param_by_content(getattr(part, "part_kind", "tool-return"))),
+                )
 
-                elif isinstance(part, FilePart):
-                    content = f"{part.id} from {part.provider_name}"
-                    console.print(content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
+            elif isinstance(part, (RetryPromptPart, TextPart, ThinkingPart)):
+                console.print(part.content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
+
+            elif isinstance(part, FilePart):
+                content = f"{part.id} from {part.provider_name}"
+                console.print(content, extra_param=ExtraParam(panel_param_by_content(part.part_kind)))
 
     asyncio.run(_helper())
 
 
 def print_config():
     """print all config key-value pairs stored in centralized config file"""
+    console = CliConsole()
     console.print(str(centralized_config.file_path), extra_param=ExtraParam(panel_param_by_content("Config file")))
 
     key_values = "\n".join([f"- {key} = {value}" for key, value in centralized_config.config.items()])
@@ -317,7 +327,7 @@ def print_workflows():
     for name in WORKFLOW_MAP.keys():
         table.add_row(name, "Internal", "False")
 
-    console.print(table)
+    CliConsole().print(table)
 
 
 def rm_workflow_mod(workflow_mod_names: list[str]):
@@ -340,6 +350,8 @@ def add_workflow_mod(workflow_mod_paths: list[str | Path]):
 
 def print_tools():
     """print all tools"""
+    console = CliConsole()
+
     table = Table(title="Function Tools")
     table.add_column("Tool", style="cyan")
     table.add_column("Module", style="magenta")

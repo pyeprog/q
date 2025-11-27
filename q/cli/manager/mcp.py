@@ -43,7 +43,7 @@ class StdioMCP(BaseModel):
         """
         config_dict = json.loads(json_str)
         name, config = first(config_dict["mcpServers"].items())
-        return cls(name=name, command=config["command"], args=config["args"], envs=config["env"])
+        return cls(name=name, command=config["command"], args=config.get("args", []), envs=config.get("env", {}))
 
 
 class StreamableHttpMCP(BaseModel):

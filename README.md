@@ -1,6 +1,26 @@
 # Q
 
+## What is it?
 "q" means query, which is a cli for agent application, including simple chatting, workflow, agentic action and more.
+
+## Why should one make another AI frontend?
+There are several types of AI frontend, all of them choose textbox as interface, but they differ in how LLM works and how it interacts with hosting environment.
+
+In case of how LLM works, there're 3 types.
+1. single LLM worker, who use tools and talk to user directly. there's no complicate process underneath.
+2. workflow, meaning there're several LLMs and calculating steps working with each other, and how they interact with each other is defined by end user.
+3. agentic app, meaning there's several LLMs working with each other, and they determine how to interact with each other by themselves.
+
+Most applications land on "single LLM worker type" or "agentic app", in which you will find a strong agent group (with one or more LLM under the hood) to work with and no way to define the workflow for more complex task.
+
+And you will find workflow orchestrating available platform like n8n, windmill, huginn, node-red, etc in which you can define your workflow with a drag-and-drop style interface.
+
+> TODO: create concrete usage demonstration
+
+In either case, it's not flexible enough. Apparently, you can't do workflow design befitting your very need when you have a general LLM or agent app. Moreover, it's limitted to work on orchestrating platform, at least you can't do crazy things with it, like those you can do with claude code, and those platforms are not so easy to config neither.
+
+I'd like to have a frontend easy to use, to create complex workflow(even implement your own agentic flow, like deep-research or claude-code), to do some crazy thing on your host envionment( everything you can do with python, you can do with q), and it's mainly designed for programmer.
+
 
 ## Features
 

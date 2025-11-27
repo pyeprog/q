@@ -127,6 +127,7 @@ class Supervise(BaseNode[DeepResearchState, BaseDeps], ConfigurableNode, Anthrop
                 "Stop when you can answer confidently - Don't keep searching for perfection",
                 "Stop searching when you have got similar searching result or less relevant garbage",
                 "Cite all sources - Append the raw URL of each fact you include in your final answer, formatted as [URL]",
+                "If you're using search tool, search in English, you can translate the result into language that user speaks",
             ],
             taboos=[f"calling web search tool for more than {_max_tool_calling_times} times"],
             output_formats=["plain text, no markdown text decoration, like bold, italic and so on"],

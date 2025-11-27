@@ -1,4 +1,3 @@
-from pathlib import Path
 from pydantic_graph.graph import Graph
 from pydantic_graph.nodes import BaseNode
 from pydantic_graph.persistence.file import FileStatePersistence

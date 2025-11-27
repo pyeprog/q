@@ -45,7 +45,7 @@ def main():
             info(directory=args.directory)
 
         case "ls":
-            ls(directory=args.directory, snapshot=args.snapshot, field=args.field)
+            ls(directory=args.directory, snapshot=args.snapshot, field=args.field, start_index=args.start_index, plain=args.plain)
 
         case "config":
             if args.key_value_strs:

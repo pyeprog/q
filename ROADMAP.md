@@ -49,7 +49,7 @@
 
 ### Version 0.2
 - [x] make editor configurable
-- [ ] register mcp and use mcp as tool
+- [x] register mcp and use mcp as tool
 - [x] create an internal workflow of extensive internet searching
 - [x] add extra tool option for create query subcommand
 - [ ] add command for creating tool and workflow from template
